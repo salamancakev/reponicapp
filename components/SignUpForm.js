@@ -1,20 +1,30 @@
 import React, { Component } from 'react'
 import { Text, View, StyleSheet, TextInput, Picker } from 'react-native'
-import { Button, Input} from "react-native-elements";
+import { Button, Input, AirbnbRating, CheckBox} from "react-native-elements";
 import { auth, firestore } from "react-native-firebase";
 export class SignUpForm extends Component {
 
   constructor(){
     super()
     this.state = {
-      name : '',
+      firstName : '',
+      lastName : '',
+      username : '',
       email : '',
       password : '',
-      type : 'personal',
-      nameError : '',
+      confirmPassword : '',
+      type : '',
+      service : '',
+      level : '',
+      id : '',
+      firstNameError : '',
+      lastNameError : '',
+      usernameError : '',
       emailError : '',
       passwordError : '',
-      authError : ''
+      idError : '',
+      authError : '',
+      checked : false
     }
   }
 
@@ -30,8 +40,22 @@ export class SignUpForm extends Component {
       this.setState({passwordError : 'Please fill in this field'})
     }
 
-    if(this.state.name == ''){
-      this.setState({nameError : 'Please fill in this field'})
+    if(this.state.confirmPassword == ''){
+      this.setState({confirmPasswordError : 'Please fill in this field'})
+    }
+
+    if(this.state.firstName == ''){
+      this.setState({firstNameError : 'Please fill in this field'})
+    }
+    
+    if(this.state.lastName == ''){
+      this.setState({lastNameError : 'Please fill in this field'})
+    }
+    if(this.state.username == ''){
+      this.setState({usernameError : 'Please fill in this field'})
+    }
+    if(this.state.id == ''){
+      this.setState({idError : 'Please fill in this field'})
     }
     return false;
    }
@@ -39,6 +63,15 @@ export class SignUpForm extends Component {
     else if(!this.validateEmail(this.state.email)){
        this.setState({emailError : 'Please enter a valid email address'})
        return false
+   }
+
+   else if(this.state.password!=this.state.confirmPassword){
+     this.setState({authError : 'Passwords do not match'})
+     return false
+   }
+
+   else if(!this.state.checked){
+     this.setState({authError : 'Please accept the terms and conditions'})
    }
 
    else{
@@ -62,7 +95,8 @@ export class SignUpForm extends Component {
        auth().createUserWithEmailAndPassword(this.state.email, this.state.password).then(user=>{
 
         firestore().collection('users').add({
-          name : this.state.name,
+          firstName : this.state.firstName,
+          lastName : this.state.lastName,
           email : this.state.email,
           type : this.state.type
         })
@@ -87,26 +121,59 @@ export class SignUpForm extends Component {
 
 
   render() {
-    const personalInput = <Input inputContainerStyle={styles.inputBox} inputStyle={styles.inputText} errorStyle={{color : 'red'}} errorMessage={this.state.nameError}
-    placeholder="Name" placeholderTextColor="#ffffff" onChangeText={name=>this.setState({name})} />
-    
-    const companyInput = <Input inputContainerStyle={styles.inputBox} inputStyle={styles.inputText} errorStyle={{color : 'red'}} errorMessage={this.state.nameError}
-        placeholder="Company Name" placeholderTextColor="#ffffff" onChangeText={name=>this.setState({name})}/>
+    let serviceInput =  <View style={styles.pickerContainer}>
+    <Text style={styles.pickerLabel}>Type of Service</Text>
+    <Picker selectedValue={this.state.service} style={styles.pickerStyle}
+    onValueChange={(itemValue, itemIndex) => this.setState({service: itemValue}) }>
+    <Picker.Item label="Social Media Manager" value="Social Media Manager" />
+    <Picker.Item label="Graphic Design" value="Graphic Design" />
+    <Picker.Item label="Web Development" value="Web Development" />
+    <Picker.Item label="Software Development" value="Software Development" />
+    </Picker>
+    </View>
+
+    let levelInput = <View style={styles.pickerContainer}>
+    <Text style={styles.pickerLabel}>Level</Text>
+    <Picker selectedValue={this.state.level} style={styles.pickerStyle}
+    onValueChange={(itemValue, itemIndex) => this.setState({level: itemValue}) }>
+    <Picker.Item label="Begginner" value="Begginner" />
+    <Picker.Item label="Intermidiate" value="Intermidiate" />
+    <Picker.Item label="Professional" value="Professional" />
+    </Picker>
+    </View>
+
+
     return (
       <View style={styles.container}>
         <View style={styles.pickerContainer}>
         <Text style={styles.pickerLabel}>Type of account</Text>
         <Picker selectedValue={this.state.type} style={styles.pickerStyle}
         onValueChange={(itemValue, itemIndex) => this.setState({type: itemValue}) }>
-        <Picker.Item label="Personal" value="personal" />
-        <Picker.Item label="Company" value="company" />
+        <Picker.Item label="Client" value="client" />
+        <Picker.Item label="Member" value="member" />
         </Picker>
         </View>
-        {this.state.type == 'personal' ? personalInput : companyInput}
+        <Input inputContainerStyle={styles.inputBox} inputStyle={styles.inputText} errorStyle={{color : 'red'}} errorMessage={this.state.firstNameError}
+        placeholder="First Name" placeholderTextColor="#ffffff" onChangeText={firstName=>this.setState({firstName})} />
+        <Input inputContainerStyle={styles.inputBox} inputStyle={styles.inputText} errorStyle={{color : 'red'}} errorMessage={this.state.lastNameError}
+        placeholder="Last Name" placeholderTextColor="#ffffff" onChangeText={lastName=>this.setState({lastName})} />
+        <Input inputContainerStyle={styles.inputBox} inputStyle={styles.inputText} errorStyle={{color : 'red'}} errorMessage={this.state.usernameError}
+        placeholder="Username" placeholderTextColor="#ffffff" onChangeText={username=>this.setState({username})} />
         <Input inputContainerStyle={styles.inputBox} inputStyle={styles.inputText} errorStyle={{color : 'red'}} errorMessage={this.state.emailError}
         placeholder="Email" placeholderTextColor="#ffffff" onChangeText={email=>this.setState({email})}/>
         <Input inputContainerStyle={styles.inputBox} inputStyle={styles.inputText} errorStyle={{color : 'red'}} errorMessage={this.state.passwordError}
         placeholder="Password" placeholderTextColor="#ffffff" secureTextEntry={true} onChangeText={password=>this.setState({password})}/>
+        <Input inputContainerStyle={styles.inputBox} inputStyle={styles.inputText} errorStyle={{color : 'red'}} errorMessage={this.state.confirmPasswordError}
+        placeholder="Confirm Password" placeholderTextColor="#ffffff" secureTextEntry={true} onChangeText={confirmPassword=>this.setState({confirmPassword})}/>
+        <Input inputContainerStyle={styles.inputBox} inputStyle={styles.inputText} errorStyle={{color : 'red'}} errorMessage={this.state.idError}
+        placeholder="ID" placeholderTextColor="#ffffff" onChangeText={id=>this.setState({id})} />
+        {this.state.type == 'member' ? serviceInput : null}
+        {this.state.type == 'member' ? levelInput : null}  
+        <CheckBox
+  title='I Accept The Terms And Conditions'
+  checked={this.state.checked}
+  onPress = {() =>{this.setState({checked : !this.state.checked})}}
+/>
         <Button containerStyle={{marginVertical: 10}} buttonStyle={styles.signupBtn} titleStyle={{fontSize : 20}} 
         title="Sign Up" type="outline" raised={true} onPress={()=>this.onSignup()} />
           <Text style={{color : 'red'}}>{this.state.authError}</Text>
@@ -126,8 +193,8 @@ const styles = StyleSheet.create({
         width : 300,
         backgroundColor : 'rgba(255,255,255,0.3)',
         borderRadius : 20,
-        paddingHorizontal : 16,
-        marginVertical : 10
+        paddingHorizontal : 10,
+        marginVertical : 5
     },
 
     inputText : {

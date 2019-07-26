@@ -1,21 +1,14 @@
 import React, { Component } from 'react'
-import { Text, View, StyleSheet, StatusBar } from 'react-native'
+import { Text, View, StyleSheet, StatusBar, ScrollView } from 'react-native'
 import {SignUpForm} from '../components/SignUpForm'
 
 export class SignUpScreen extends Component {
   static navigationOptions = {
-  title : 'Sign Up',
-  headerStyle : {
-    backgroundColor : '#42a5f5'
-  },
-  headerTintColor : '#fff',
-  headerTitleStyle : {
-    fontWeight : 'bold'
-  }
+  header: null
   }
   render() {
     return (
-      <View style={styles.container}>
+      <ScrollView contentContainerStyle={styles.container} endFillColor="#4286f4">
         <StatusBar backgroundColor='#0077c2' barStyle='light-content' />
         <Text style={styles.logo}>Reponic</Text>
         <SignUpForm />
@@ -23,14 +16,14 @@ export class SignUpScreen extends Component {
         <Text style={styles.signUpText}>Already have an account? </Text>
         <Text style={styles.signUpBtn} onPress={() => this.props.navigation.navigate('Login')}>Login</Text>
         </View>
-      </View>
+      </ScrollView>
     )
   }
 }
 
 const styles = StyleSheet.create({
   container : {
-    flex : 1,
+    flex : 0,
     justifyContent : 'center',
     alignItems : 'center',
     backgroundColor : '#4286f4'
