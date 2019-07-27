@@ -93,14 +93,31 @@ export class SignUpForm extends Component {
 
      else{
        auth().createUserWithEmailAndPassword(this.state.email, this.state.password).then(user=>{
-
-        firestore().collection('users').add({
+        if(this.state.type = 'client'){
+          firestore().collection('users').add({
           firstName : this.state.firstName,
           lastName : this.state.lastName,
+          username : this.state.username,
           email : this.state.email,
+          id : this.state.id,
           type : this.state.type
         })
       
+        }
+
+        else{
+          firestore().collection('users').add({
+            firstName : this.state.firstName,
+            lastName : this.state.lastName,
+            username : this.state.username,
+            email : this.state.email,
+            id : this.state.id,
+            type : this.state.type,
+            service : this.state.service,
+            level : this.state.level
+          })
+        }
+        
     }).catch(error=>{
       switch (error.code) {
         case 'auth/email-already-in-use':
