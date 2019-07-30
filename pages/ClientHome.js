@@ -3,7 +3,7 @@ import { Text, View, StatusBar } from 'react-native'
 import { Button } from "react-native-elements";
 import { auth } from "react-native-firebase";
 
-export class HomeScreen extends Component {
+export class ClientHomeScreen extends Component {
 
   static navigationOptions = {
     title : 'Home',
@@ -32,4 +32,4 @@ export class HomeScreen extends Component {
   }
 }
 
-export default HomeScreen
+export default ClientHomeScreen

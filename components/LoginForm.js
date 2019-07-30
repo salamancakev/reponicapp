@@ -54,7 +54,6 @@ export class LoginForm extends Component {
 
     else{
       auth().signInWithEmailAndPassword(this.state.email, this.state.password).then(response=>{
-      console.log(response)
     }).catch(error=>{
       switch (error.code) {
         case 'auth/user-not-found':
