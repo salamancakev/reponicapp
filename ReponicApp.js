@@ -8,13 +8,14 @@
 
 import React, {Component} from 'react';
 import {Platform, StyleSheet, Text, View, ActivityIndicator, StatusBar} from 'react-native';
-import { createStackNavigator, createSwitchNavigator, createAppContainer } from "react-navigation";
+import { createStackNavigator, createSwitchNavigator, createDrawerNavigator, createAppContainer } from "react-navigation";
 import { auth, firestore } from "react-native-firebase";
 import {connect} from 'react-redux'
 import { LoginScreen } from "./pages/Login";
 import { ClientHomeScreen } from "./pages/ClientHome";
 import {SignUpScreen} from './pages/SignUp';
 import { RequestServiceScreen } from "./pages/RequestService";
+import { MemberHomeScreen } from "./pages/MemberHome";
 
 const AuthStack =  createStackNavigator({
   Login : LoginScreen,
@@ -27,12 +28,18 @@ const AuthStack =  createStackNavigator({
 
 const AuthContainer = createAppContainer(AuthStack);
 
-const AppStack = createStackNavigator({
+const ClientAppStack = createDrawerNavigator({
   ClientHome : ClientHomeScreen,
   RequestService : RequestServiceScreen
 })
 
-const AppContainer = createAppContainer(AppStack)
+const ClientAppContainer = createAppContainer(ClientAppStack)
+
+const MemberAppStack = createDrawerNavigator({
+    MemberHome : MemberHomeScreen,
+  })
+  
+  const MemberAppContainer = createAppContainer(MemberAppStack)
 
 
 class ReponicApp extends Component {
@@ -46,9 +53,8 @@ class ReponicApp extends Component {
   
 
   componentDidMount(){
-      console.log("Hello")
-      console.log(this.props)
     this.unsubscriber = auth().onAuthStateChanged((user)=>{
+      console.log(this.props)
       this.props.updateUserAuth(user)
       if(this.props.userAuth){
         firestore().collection('users').where('email', '==', user.email).get().then(snapshot=>{
@@ -72,7 +78,13 @@ class ReponicApp extends Component {
       return <AuthContainer />
     }
 
-    return <AppContainer />
+    else if(this.props.userInfo.type == 'member'){
+        return <MemberAppContainer />
+    }
+    else {
+        return <ClientAppContainer />
+    }
+    
   }
 
   
@@ -87,8 +99,8 @@ function mapStateToProps(state){
 
 function mapDispatchToProps(dispatch){
     return {
-        updateUserAuth : (user) => dispatch({type : 'UPDATE_AUTH', user}),
-        updateUserInfo : (user) => dispatch({type : 'UPDATE_INFO', user})
+        updateUserAuth : (userAuth) => dispatch({type : 'UPDATE_AUTH', userAuth}),
+        updateUserInfo : (userInfo) => dispatch({type : 'UPDATE_INFO', userInfo})
     }
 }
 

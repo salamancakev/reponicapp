@@ -19,12 +19,11 @@ const initialState = {
 }
 
 const reducer = (state = initialState, action) =>{
-  console.log(action)
   switch(action.type){
     case 'UPDATE_AUTH':
-      return {userAuth : action.user}
+      return {userAuth : action.userAuth}
     case 'UPDATE_INFO':
-      return {userInfo : action.user}
+      return {userAuth : state.userAuth, userInfo : action.userInfo}
     default:
   }
   return state
