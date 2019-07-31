@@ -1,21 +1,66 @@
 import React, { Component } from 'react'
-import { Text, View, ActivityIndicator, StyleSheet } from 'react-native'
+import { View, ActivityIndicator, StyleSheet, StatusBar } from 'react-native'
+import {Icon} from 'react-native-elements'
 import {createDrawerNavigator, createAppContainer } from "react-navigation";
 import {connect} from 'react-redux'
-import { ClientHomeScreen } from "../pages/ClientHome";
-import { RequestServiceScreen } from "../pages/RequestService";
-import { MemberHomeScreen } from "../pages/MemberHome";
-import {ClientHomeStackNavigator, MemberHomeStackNavigator, RequestServiceStackNavigator} from '../navigator/AppStackNavigator'
+import {
+    ClientHomeStackNavigator, 
+    MemberHomeStackNavigator, 
+    RequestServiceStackNavigator,
+    PaymentMethodStackNavigator,
+    HistoryStackNavigator,
+    CheckServiceStackNavigator} from '../navigator/AppStackNavigator'
 
   const ClientAppStack = createDrawerNavigator({
-    ClientHome : ClientHomeStackNavigator,
-    RequestService : RequestServiceStackNavigator
+    ClientHome : {
+     screen : ClientHomeStackNavigator,
+     navigationOptions :{
+         title : 'Home',
+         drawerIcon : (<Icon name="home" type="font-awesome" />)
+     }
+    } ,
+    RequestService : {
+        screen : RequestServiceStackNavigator,
+        navigationOptions : {
+            title : 'Request New Service',
+            drawerIcon : (<Icon name="edit" type="font-awesome" />)
+        }
+    },
+    CheckServices : {
+        screen : CheckServiceStackNavigator,
+        navigationOptions : {
+            title : 'Check Services',
+            drawerIcon : (<Icon name="list" type="font-awesome" />)
+        }
+    },
+
+    History : {
+        screen : HistoryStackNavigator,
+        navigationOptions : {
+            title : 'History',
+            drawerIcon : (<Icon name="history" type="font-awesome" />)
+        }
+    },
+
+    PaymentMethod : {
+        screen : PaymentMethodStackNavigator,
+        navigationOptions : {
+            title : 'Payment Method',
+            drawerIcon : (<Icon name="credit-card" type="font-awesome" />)
+        }
+    }
   })
   
   const ClientAppContainer = createAppContainer(ClientAppStack)
   
   const MemberAppStack = createDrawerNavigator({
-      MemberHome : MemberHomeStackNavigator,
+      MemberHome : {
+          screen : MemberHomeStackNavigator,
+          navigationOptions :{
+            title : 'Home',
+            drawerIcon : (<Icon name="home" type="font-awesome" />)
+        }
+      },
     })
     
     const MemberAppContainer = createAppContainer(MemberAppStack)
@@ -27,6 +72,7 @@ import {ClientHomeStackNavigator, MemberHomeStackNavigator, RequestServiceStackN
         if(!this.props.userInfo){
           return (
             <View style={styles.container}>
+                <StatusBar backgroundColor='#0077c2' barStyle='light-content' />
                 <ActivityIndicator size="large" color="42a5f5" />
             </View>
         )  

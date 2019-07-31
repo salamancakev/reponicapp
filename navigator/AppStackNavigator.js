@@ -1,7 +1,10 @@
 import { createStackNavigator } from "react-navigation";
-import { ClientHomeScreen } from "../pages/ClientHome";
-import { MemberHomeScreen } from "../pages/MemberHome";
+import  ClientHomeScreen  from "../pages/ClientHome";
+import MemberHomeScreen  from "../pages/MemberHome";
 import { RequestServiceScreen } from "../pages/RequestService";
+import {CheckServicesScreen} from '../pages/CheckServices'
+import { PaymentMethodScreen } from "../pages/PaymentMethod";
+import { HistoryScreen } from "../pages/History";
 
 export const ClientHomeStackNavigator = createStackNavigator({
     ClientHome : ClientHomeScreen
@@ -13,4 +16,16 @@ export const MemberHomeStackNavigator = createStackNavigator({
 
 export const RequestServiceStackNavigator = createStackNavigator({
     RequestService : RequestServiceScreen
+})
+
+export const CheckServiceStackNavigator = createStackNavigator({
+    CheckServicesScreen : CheckServicesScreen
+})
+
+export const PaymentMethodStackNavigator = createStackNavigator({
+    PaymentMethod : PaymentMethodScreen
+})
+
+export const HistoryStackNavigator = createStackNavigator({
+    History : HistoryScreen
 })

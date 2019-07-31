@@ -93,7 +93,8 @@ export class SignUpForm extends Component {
 
      else{
        auth().createUserWithEmailAndPassword(this.state.email, this.state.password).then(user=>{
-        if(this.state.type = 'client'){
+        auth().currentUser.sendEmailVerification().then(email=>{
+          if(this.state.type = 'client'){
           firestore().collection('users').add({
           firstName : this.state.firstName,
           lastName : this.state.lastName,
@@ -117,6 +118,7 @@ export class SignUpForm extends Component {
             level : this.state.level
           })
         }
+        })
         
     }).catch(error=>{
       switch (error.code) {

@@ -1,7 +1,8 @@
 import React, { Component } from 'react'
 import { Text, View } from 'react-native'
-
-export class MemberHomeScreen extends Component {
+import { connect } from "react-redux";
+import { auth } from "react-native-firebase";
+class MemberHomeScreen extends Component {
     static navigationOptions = ({navigation}) => {
         return {
         headerTitle : 'Home',
@@ -18,13 +19,26 @@ export class MemberHomeScreen extends Component {
       } 
     }
 
+    onLogout(){
+      auth().signOut()
+    }
+
     render() {
         return (
-            <View>
-                <Text> Welcome Home </Text>
-            </View>
+          <View style={{flex :1,justifyContent : 'center', alignItems : 'center'}}>
+          <StatusBar backgroundColor='#0077c2' barStyle='light-content' />
+          <Text style={{fontSize:20, marginBottom:15}} >Welcome {this.props.userInfo.username}!</Text>
+          <Button title='Request Service' buttonStyle={{width: 200, borderRadius : 20, marginBottom: 10}} onPress={()=> this.props.navigation.navigate('RequestService')} />
+          <Button title='Logout' buttonStyle={{width: 200, borderRadius : 20}} onPress={()=> this.onLogout()} />
+        </View>
         )
     }
 }
 
-export default MemberHomeScreen
+function mapStateToProps(state){
+  return{
+      userInfo : state.userInfo
+  }
+}
+
+export default connect(mapStateToProps) (MemberHomeScreen)

@@ -7,8 +7,7 @@
  */
 
 import React, {Component} from 'react';
-import {Platform, StyleSheet, Text, View, ActivityIndicator, StatusBar} from 'react-native';
-import { createStackNavigator, createSwitchNavigator, createDrawerNavigator, createAppContainer } from "react-navigation";
+import { createStackNavigator, createAppContainer } from "react-navigation";
 import { auth, firestore } from "react-native-firebase";
 import {connect} from 'react-redux'
 import { LoginScreen } from "./pages/Login";
@@ -46,8 +45,11 @@ class ReponicApp extends Component {
       this.props.updateUserAuth(user)
       if(this.props.userAuth){
         firestore().collection('users').where('email', '==', user.email).get().then(snapshot=>{
-        let doc = snapshot.docs[0]
+          if(snapshot){
+            let doc = snapshot.docs[0]
         this.props.updateUserInfo(doc.data())
+          }
+        
     })
       }
       

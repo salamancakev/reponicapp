@@ -1,11 +1,12 @@
 import React, { Component } from 'react'
-import { Text, View, StyleSheet, StatusBar,  } from 'react-native'
+import { Text, View, StyleSheet} from 'react-native'
 import {Icon} from 'react-native-elements'
 
-export class RequestServiceScreen extends Component {
+export class CheckServicesScreen extends Component {
+
     static navigationOptions = ({navigation}) => {
         return {
-        headerTitle : 'Request Service',
+        headerTitle : 'Check Services',
         headerLeft : (
           <Icon name='bars' type='font-awesome' color='#fff' underlayColor='#42a5f5' containerStyle={{marginLeft: 10}} onPress={()=>navigation.openDrawer()} />
         ),
@@ -22,7 +23,6 @@ export class RequestServiceScreen extends Component {
     render() {
         return (
             <View style={styles.container}>
-                <StatusBar backgroundColor='#0077c2' barStyle='light-content' />
                 <Text> Coming Soon </Text>
             </View>
         )
@@ -36,4 +36,5 @@ const styles = StyleSheet.create({
         alignItems : 'center'
     }
 })
-export default RequestServiceScreen
+
+export default CheckServicesScreen
