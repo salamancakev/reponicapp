@@ -1,10 +1,14 @@
 import React, { Component } from 'react'
 import { Text, View, StyleSheet, StatusBar,  } from 'react-native'
+import {Header, Icon} from 'react-native-elements'
 
 export class RequestServiceScreen extends Component {
-
-    static navigationOptions = {
-        title : 'Request Service',
+    static navigationOptions = ({navigation}) => {
+        return {
+        headerTitle : 'Request Service',
+        headerLeft : (
+          <Icon name='bars' type='font-awesome' color='#fff' underlayColor='#42a5f5' containerStyle={{marginLeft: 10}} onPress={()=>navigation.openDrawer()} />
+        ),
         headerStyle : {
           backgroundColor : '#42a5f5'
         },
@@ -12,7 +16,8 @@ export class RequestServiceScreen extends Component {
         headerTitleStyle : {
           fontWeight : 'bold'
         }
-      }
+      } 
+    }
 
     render() {
         return (

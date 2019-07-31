@@ -1,12 +1,17 @@
 import React, { Component } from 'react'
-import { Text, View, StatusBar } from 'react-native'
-import { Button } from "react-native-elements";
+import { Text, View, StatusBar, TouchableOpacity } from 'react-native'
+import { Button, Header, Icon } from "react-native-elements";
+import { DrawerActions } from 'react-navigation'
 import { auth } from "react-native-firebase";
 
 export class ClientHomeScreen extends Component {
 
-  static navigationOptions = {
-    title : 'Home',
+  static navigationOptions = ({navigation}) => {
+    return {
+    headerTitle : 'Home',
+    headerLeft : (
+        <Icon name='bars' type='font-awesome' color='#fff' underlayColor='#42a5f5' containerStyle={{marginLeft: 10}} onPress={()=>navigation.openDrawer()} />
+    ),
     headerStyle : {
       backgroundColor : '#42a5f5'
     },
@@ -14,7 +19,8 @@ export class ClientHomeScreen extends Component {
     headerTitleStyle : {
       fontWeight : 'bold'
     }
-  }
+  } 
+}
 
   onLogout(){
     auth().signOut()

@@ -12,10 +12,9 @@ import { createStackNavigator, createSwitchNavigator, createDrawerNavigator, cre
 import { auth, firestore } from "react-native-firebase";
 import {connect} from 'react-redux'
 import { LoginScreen } from "./pages/Login";
-import { ClientHomeScreen } from "./pages/ClientHome";
 import {SignUpScreen} from './pages/SignUp';
-import { RequestServiceScreen } from "./pages/RequestService";
-import { MemberHomeScreen } from "./pages/MemberHome";
+
+import LoadingScreen from './components/Loading'
 
 const AuthStack =  createStackNavigator({
   Login : LoginScreen,
@@ -28,18 +27,7 @@ const AuthStack =  createStackNavigator({
 
 const AuthContainer = createAppContainer(AuthStack);
 
-const ClientAppStack = createDrawerNavigator({
-  ClientHome : ClientHomeScreen,
-  RequestService : RequestServiceScreen
-})
 
-const ClientAppContainer = createAppContainer(ClientAppStack)
-
-const MemberAppStack = createDrawerNavigator({
-    MemberHome : MemberHomeScreen,
-  })
-  
-  const MemberAppContainer = createAppContainer(MemberAppStack)
 
 
 class ReponicApp extends Component {
@@ -78,12 +66,7 @@ class ReponicApp extends Component {
       return <AuthContainer />
     }
 
-    else if(this.props.userInfo.type == 'member'){
-        return <MemberAppContainer />
-    }
-    else {
-        return <ClientAppContainer />
-    }
+    return <LoadingScreen />
     
   }
 
