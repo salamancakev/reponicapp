@@ -155,7 +155,7 @@ export class SignUpForm extends Component {
     <Text style={styles.pickerLabel}>Level</Text>
     <Picker selectedValue={this.state.level} style={styles.pickerStyle}
     onValueChange={(itemValue, itemIndex) => this.setState({level: itemValue}) }>
-    <Picker.Item label="Begginner" value="Begginner" />
+    <Picker.Item label="Beginner" value="Beginner" />
     <Picker.Item label="Intermidiate" value="Intermidiate" />
     <Picker.Item label="Professional" value="Professional" />
     </Picker>

@@ -1,8 +1,16 @@
 import React, { Component } from 'react'
-import { Text, View, StyleSheet, StatusBar,  } from 'react-native'
+import { Text, View, StyleSheet, StatusBar, Picker} from 'react-native'
 import {Icon} from 'react-native-elements'
+import { RequestGraphicDesignForm } from '../components/request/RequestGraphicDesignForm'
 
 export class RequestServiceScreen extends Component {
+
+    constructor(){
+      super()
+      this.state = {
+        type : 'Graphic Design'
+      }
+    }
     static navigationOptions = ({navigation}) => {
         return {
         headerTitle : 'Request Service',
@@ -19,12 +27,29 @@ export class RequestServiceScreen extends Component {
       } 
     }
 
+    renderForm(){
+      if(this.state.type == 'Graphic Design'){
+        return <RequestGraphicDesignForm />
+      }
+    }
+
     render() {
         return (
             <View style={styles.container}>
                 <StatusBar backgroundColor='#0077c2' barStyle='light-content' />
-                <Text> Coming Soon </Text>
+                <View style={styles.pickerContainer}>
+                  <Text style={{fontSize:18}}>Select type of service</Text>
+                   <Picker selectedValue={this.state.type} style={styles.pickerStyle} 
+                   onValueChange={(itemValue, itemIndex) => this.setState({type: itemValue}) }>
+                  <Picker.Item label="Graphic Design" value="Graphic Design" />
+                  <Picker.Item label="Social Media" value="Social Media" />
+                  <Picker.Item label="Web Design" value="Web Design" />
+                  <Picker.Item label="Software Development" value="Software Development" />
+                </Picker>
+                </View>
+                {this.renderForm()}
             </View>
+            
         )
     }
 }
@@ -32,8 +57,19 @@ export class RequestServiceScreen extends Component {
 const styles = StyleSheet.create({
     container : {
         flex :1,
-        justifyContent : 'center',
-        alignItems : 'center'
+        alignItems : 'center',
+        paddingVertical : 20
+    },
+    pickerContainer : {
+      flexDirection : "row",
+      justifyContent : 'space-between',
+      alignItems : 'center',
+      width : 300
+    },
+    pickerStyle : {
+      height : 50,
+      width : 150,
+      marginLeft: 10
     }
 })
 export default RequestServiceScreen
