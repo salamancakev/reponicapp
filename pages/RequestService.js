@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { Text, View, StyleSheet, StatusBar, Picker} from 'react-native'
 import {Icon} from 'react-native-elements'
-import { RequestGraphicDesignForm } from '../components/request/RequestGraphicDesignForm'
+import  RequestGraphicDesignForm  from '../components/request/RequestGraphicDesignForm'
 
 export class RequestServiceScreen extends Component {
 
@@ -38,7 +38,7 @@ export class RequestServiceScreen extends Component {
             <View style={styles.container}>
                 <StatusBar backgroundColor='#0077c2' barStyle='light-content' />
                 <View style={styles.pickerContainer}>
-                  <Text style={{fontSize:18}}>Select type of service</Text>
+                  <Text style={{fontSize:16}}>Select type of service</Text>
                    <Picker selectedValue={this.state.type} style={styles.pickerStyle} 
                    onValueChange={(itemValue, itemIndex) => this.setState({type: itemValue}) }>
                   <Picker.Item label="Graphic Design" value="Graphic Design" />
@@ -70,6 +70,7 @@ const styles = StyleSheet.create({
       height : 50,
       width : 150,
       marginLeft: 10
-    }
+    },
+    
 })
 export default RequestServiceScreen

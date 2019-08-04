@@ -44,12 +44,10 @@ class ReponicApp extends Component {
       console.log(this.props)
       this.props.updateUserAuth(user)
       if(this.props.userAuth){
-        firestore().collection('users').where('email', '==', user.email).get().then(snapshot=>{
-          if(snapshot){
-            let doc = snapshot.docs[0]
+        firestore().collection('users').doc(this.props.userAuth.uid).get().then(doc=>{
+          if(doc.exists){
         this.props.updateUserInfo(doc.data())
           }
-        
     })
       }
       

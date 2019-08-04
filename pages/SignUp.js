@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { Text, View, StyleSheet, StatusBar, ScrollView } from 'react-native'
-import {SignUpForm} from '../components/SignUpForm'
+import SignUpForm from '../components/SignUpForm'
 
 export class SignUpScreen extends Component {
   static navigationOptions = {

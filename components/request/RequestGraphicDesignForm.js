@@ -1,17 +1,46 @@
 import React, { Component } from 'react'
-import { Text, View, Picker, StyleSheet, TextInput, DatePickerAndroid } from 'react-native'
+import { Text, View, Picker, StyleSheet, DatePickerAndroid, Alert } from 'react-native'
 import {Input, Button} from 'react-native-elements'
+import { firestore } from 'react-native-firebase'
+import { connect } from 'react-redux'
 
-export class RequestGraphicDesignForm extends Component {
+class RequestGraphicDesignForm extends Component {
 
     constructor(){
         super()
         this.state = {
-            level : '',
-            service : '',
-            date : null
+            level : 'Beginner',
+            service : 'Logo',
+            date : null,
+            loading : false
         }
     }
+
+
+    onRequestService(){
+      this.setState({loading : true})
+      firestore().collection('services').add({
+        clientID : this.props.userAuth.uid,
+        level : this.state.level,
+        service : this.state.service,
+        dueDate : this.state.date,
+        status : 'Requested'
+      }).then(service=>{
+        this.setState({loading:false})
+        Alert.alert(
+          'Service Requested',
+          'Your request has been sent. You will recieve a notification once one of our workers accepts the job.',
+          [
+            {text : 'OK', onPress: ()=>{console.log('OK pressed')}}
+          ]
+        )
+      }).catch(error=>{
+        this.setState({loading:false})
+        console.error(error)
+      })
+    }
+
+
 
     async openDatePicker(){
         try {
@@ -22,14 +51,16 @@ export class RequestGraphicDesignForm extends Component {
             });
             if (action !== DatePickerAndroid.dismissedAction) {
               // Selected year, month (0-11), day
-             this.setState({date : new Date(year, month, day)})
-             console.log(this.state.date)
+             let dueMonth = month+1
+             let dueDate = day+'/'+dueMonth+'/'+year
+             this.setState({date : dueDate})
+             
             }
           } catch ({code, message}) {
             console.warn('Cannot open date picker', message);
           }
     }
-
+    
     render() {
         return (
             <View style={styles.container} >
@@ -43,7 +74,7 @@ export class RequestGraphicDesignForm extends Component {
     </Picker>
     </View>
                 <View style={styles.pickerContainer}>
-    <Text style={{fontSize: 16}}>Type of Service</Text>
+    <Text style={{fontSize: 16}}>Type of service</Text>
     <Picker selectedValue={this.state.service} style={styles.pickerStyle}
     onValueChange={(itemValue, itemIndex) => this.setState({service: itemValue}) }>
     <Picker.Item label="Logo" value="Logo" />
@@ -56,15 +87,31 @@ export class RequestGraphicDesignForm extends Component {
     <Picker.Item label="Other" value="Other" />
     </Picker>
     </View>
-    {this.state.service == 'Other' ? <TextInput placeholder="Specify type of service"/> : null}
-    <TextInput placeholder="Relevant Details"/>
-    <TextInput placeholder="Possible Colors"/>
-    <Button containerStyle={{marginVertical: 10}} titleStyle={{fontSize : 20}} 
+    {this.state.service == 'Other' ? <Input containerStyle={styles.inputBox} placeholder="Specify type of service"/> : null}
+    <Input containerStyle={styles.inputBox} placeholder="Relevant Details"/>
+    <Input containerStyle={styles.inputBox} placeholder="Possible Colors"/>
+    <View style={styles.dateContainer}>
+      <Text style={{fontSize:16}} > {!this.state.date ? 'Select due date' : 'Due date: '+this.state.date} </Text>
+      <Button containerStyle={{marginVertical: 10}} titleStyle={{fontSize : 16}} 
     title="Due Date"  raised={true} onPress={()=>this.openDatePicker()} />
+    </View>
+
+    <Button containerStyle={{marginVertical:10}} buttonStyle={styles.submitBtn} titleStyle={{fontSize:20}} title='Request Service' raised={true} loading={this.state.loading} onPress={()=>{this.onRequestService()}} />
             </View>
         )
     }
 }
+
+function mapStateToProps(state){
+  return{
+      userAuth : state.userAuth,
+      userInfo : state.userInfo
+  }
+}
+
+
+export default connect(mapStateToProps) (RequestGraphicDesignForm)
+
 
 const styles = StyleSheet.create({
     container : {
@@ -82,7 +129,23 @@ const styles = StyleSheet.create({
         height : 50,
         width : 150,
         marginLeft: 10
+      },
+      inputBox : {
+        width : 300,
+        backgroundColor : 'rgba(255,255,255,0.3)',
+        borderRadius : 20,
+        paddingHorizontal : 10,
+        marginVertical : 5
+      },
+
+      dateContainer :{
+        width : 300,
+        flexDirection : 'row',
+        alignItems : 'center',
+        justifyContent : 'space-between'
+      },
+      submitBtn : {
+        width : 200,
+        backgroundColor: '#5cb85c'
       }
 })
-
-export default RequestGraphicDesignForm

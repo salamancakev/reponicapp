@@ -2,7 +2,10 @@ import React, { Component } from 'react'
 import { Text, View, StyleSheet, TextInput, Picker } from 'react-native'
 import { Button, Input, AirbnbRating, CheckBox} from "react-native-elements";
 import { auth, firestore } from "react-native-firebase";
-export class SignUpForm extends Component {
+import { connect } from 'react-redux'
+
+
+class SignUpForm extends Component {
 
   constructor(){
     super()
@@ -95,7 +98,7 @@ export class SignUpForm extends Component {
        auth().createUserWithEmailAndPassword(this.state.email, this.state.password).then(user=>{
         auth().currentUser.sendEmailVerification().then(email=>{
           if(this.state.type = 'client'){
-          firestore().collection('users').add({
+          firestore().collection('users').doc(this.props.userAuth.uid).set({
           firstName : this.state.firstName,
           lastName : this.state.lastName,
           username : this.state.username,
@@ -107,7 +110,7 @@ export class SignUpForm extends Component {
         }
 
         else{
-          firestore().collection('users').add({
+          firestore().collection('users').doc(this.props.userAuth.uid).set({
             firstName : this.state.firstName,
             lastName : this.state.lastName,
             username : this.state.username,
@@ -202,6 +205,17 @@ export class SignUpForm extends Component {
   }
 }
 
+
+
+export default connect(mapStateToProps)(SignUpForm)
+
+function mapStateToProps(state){
+  return{
+      userAuth : state.userAuth,
+  }
+}
+
+
 const styles = StyleSheet.create({
     container : {
         justifyContent : 'center',
@@ -244,5 +258,3 @@ const styles = StyleSheet.create({
     borderRadius : 20,
     }
     })
-
-export default SignUpForm
