@@ -11,6 +11,8 @@ class RequestGraphicDesignForm extends Component {
         this.state = {
             level : 'Beginner',
             service : 'Logo',
+            details : '',
+            colors : '',
             date : null,
             loading : false
         }
@@ -21,8 +23,11 @@ class RequestGraphicDesignForm extends Component {
       this.setState({loading : true})
       firestore().collection('services').add({
         clientID : this.props.userAuth.uid,
+        type : 'Graphic Design',
         level : this.state.level,
         service : this.state.service,
+        details : this.state.details,
+        colors : this.state.colors,
         dueDate : this.state.date,
         status : 'Requested'
       }).then(service=>{
@@ -88,8 +93,8 @@ class RequestGraphicDesignForm extends Component {
     </Picker>
     </View>
     {this.state.service == 'Other' ? <Input containerStyle={styles.inputBox} placeholder="Specify type of service"/> : null}
-    <Input containerStyle={styles.inputBox} placeholder="Relevant Details"/>
-    <Input containerStyle={styles.inputBox} placeholder="Possible Colors"/>
+    <Input containerStyle={styles.inputBox} placeholder="Relevant Details" onChangeText={details=>{this.setState({details})}} />
+    <Input containerStyle={styles.inputBox} placeholder="Possible Colors" onChangeText={colors=>{this.setState({colors})}}/>
     <View style={styles.dateContainer}>
       <Text style={{fontSize:16}} > {!this.state.date ? 'Select due date' : 'Due date: '+this.state.date} </Text>
       <Button containerStyle={{marginVertical: 10}} titleStyle={{fontSize : 16}} 

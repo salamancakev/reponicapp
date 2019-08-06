@@ -1,7 +1,9 @@
 import React, { Component } from 'react'
-import { Text, View, StyleSheet, StatusBar, Picker} from 'react-native'
+import { Text, View, StyleSheet, StatusBar, Picker, ScrollView} from 'react-native'
 import {Icon} from 'react-native-elements'
 import  RequestGraphicDesignForm  from '../components/request/RequestGraphicDesignForm'
+import  RequestSocialMediaForm from "../components/request/RequestSocialMediaForm";
+import  RequestWebDesignForm from "../components/request/RequestWebDesignForm";
 
 export class RequestServiceScreen extends Component {
 
@@ -31,11 +33,17 @@ export class RequestServiceScreen extends Component {
       if(this.state.type == 'Graphic Design'){
         return <RequestGraphicDesignForm />
       }
+      else if(this.state.type == 'Social Media'){
+        return <RequestSocialMediaForm />
+      }
+      else if (this.state.type == 'Web Design'){
+        return <RequestWebDesignForm />
+      }
     }
 
     render() {
         return (
-            <View style={styles.container}>
+            <ScrollView contentContainerStyle={styles.container}>
                 <StatusBar backgroundColor='#0077c2' barStyle='light-content' />
                 <View style={styles.pickerContainer}>
                   <Text style={{fontSize:16}}>Select type of service</Text>
@@ -48,7 +56,7 @@ export class RequestServiceScreen extends Component {
                 </Picker>
                 </View>
                 {this.renderForm()}
-            </View>
+            </ScrollView>
             
         )
     }
@@ -56,7 +64,6 @@ export class RequestServiceScreen extends Component {
 
 const styles = StyleSheet.create({
     container : {
-        flex :1,
         alignItems : 'center',
         paddingVertical : 20
     },
