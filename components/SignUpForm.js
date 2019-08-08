@@ -118,7 +118,8 @@ class SignUpForm extends Component {
             id : this.state.id,
             type : this.state.type,
             service : this.state.service,
-            level : this.state.level
+            level : this.state.level,
+            status : 'Inactive'
           })
         }
         })

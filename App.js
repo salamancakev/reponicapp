@@ -15,7 +15,7 @@ import ReponicApp from './ReponicApp'
 
 const initialState = {
   userAuth : null,
-  userInfo : null
+  userInfo : null,
 }
 
 const reducer = (state = initialState, action) =>{

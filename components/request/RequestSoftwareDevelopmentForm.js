@@ -68,7 +68,7 @@ export class RequestSoftwareDevelopmentForm extends Component {
     render() {
         return (
             <View>
-                <Text> textInComponent </Text>
+                <Text> Coming soon </Text>
             </View>
         )
     }
