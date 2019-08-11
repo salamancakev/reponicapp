@@ -3,7 +3,6 @@ import { Text, View, Picker, StyleSheet, DatePickerAndroid, Alert } from 'react-
 import {Input, Button} from 'react-native-elements'
 import { firestore } from 'react-native-firebase'
 import { connect } from 'react-redux'
-import { threadId } from 'worker_threads';
 
 class RequestGraphicDesignForm extends Component {
 
@@ -16,33 +15,34 @@ class RequestGraphicDesignForm extends Component {
             detailsError : '',
             colors : '',
             colorsError : '',
-            date : null,
+            date : '',
             loading : false
         }
     }
-
-    validateForm(){
-      
-    }
-
     onRequestService(){
-      if(this.state.details == ''){
+      let dueDate =  this.state.date
+
+      if(this.state.details == '' || this.state.colors == ''){
+       if(this.state.details == ''){
        this.setState({detailsError : 'Please fill in this field'})
-       return false 
+
       }
       if(this.state.colors == ''){
         this.setState({colorsError : 'Please fill in this field'})
-        return false
+      } 
+      return false
       }
 
-      if(this.state.date == null){
+      
+
+      if(dueDate == ''){
         let date = new Date()
-        let day = date.getDay()
+        date.setDate(date.getDate() + 7)
+        let day = date.getDate()
         let month = date.getMonth() + 1
         let year = date.getFullYear()
 
-        let dueDate = day+'/'+month+'/'+year
-        this.setState({date : dueDate})
+        dueDate = day+'/'+month+'/'+year
       }
 
       this.setState({loading : true})
@@ -53,7 +53,7 @@ class RequestGraphicDesignForm extends Component {
         service : this.state.service,
         details : this.state.details,
         colors : this.state.colors,
-        dueDate : this.state.date,
+        dueDate : dueDate,
         status : 'Requested'
       }).then(service=>{
         this.setState({loading:false})
@@ -121,7 +121,7 @@ class RequestGraphicDesignForm extends Component {
     <Input containerStyle={styles.inputBox} placeholder="Relevant Details" onChangeText={details=>{this.setState({details})}} errorStyle={{color : 'red'}} errorMessage={this.state.detailsError}/>
     <Input containerStyle={styles.inputBox} placeholder="Possible Colors" onChangeText={colors=>{this.setState({colors})}} errorStyle={{color : 'red'}} errorMessage={this.state.colorsError}/>
     <View style={styles.dateContainer}>
-      <Text style={{fontSize:16}} > {!this.state.date ? 'Select due date' : 'Due date: '+this.state.date} </Text>
+      <Text style={{fontSize:16}} > {this.state.date =='' ? 'Select due date' : 'Due date: '+this.state.date} </Text>
       <Button containerStyle={{marginVertical: 10}} titleStyle={{fontSize : 16}} 
     title="Due Date"  raised={true} onPress={()=>this.openDatePicker()} />
     </View>

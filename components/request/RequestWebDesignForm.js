@@ -27,30 +27,30 @@ import { connect } from 'react-redux'
     }
 
     onRequestService(){
-
-      if(this.state.details == ''){
+      let dueDate = this.state.date
+      if(this.state.details == '' || this.state.topic == '' || this.state.name == ''){
+        if(this.state.details == ''){
         this.setState({detailsError : 'Please fill in this field'})
-        return false 
        }
 
        if(this.state.topic == ''){
         this.setState({topicError : 'Please fill in this field'})
-        return false 
        }
 
        if(this.state.name == ''){
         this.setState({nameError : 'Please fill in this field'})
-        return false 
        }
+       return false 
+      }
+      
 
-       if(this.state.date == null){
+       if(dueDate == ''){
         let date = new Date()
-        let day = date.getDay()
+        date.setDate(date.getDate() + 7)
+        let day = date.getDate()
         let month = date.getMonth() + 1
         let year = date.getFullYear()
-
-        let dueDate = day+'/'+month+'/'+year
-        this.setState({date : dueDate})
+        dueDate = day+'/'+month+'/'+year
       }
 
         this.setState({loading : true})
@@ -64,7 +64,7 @@ import { connect } from 'react-redux'
           name : this.state.name,
           domain : this.state.domain,
           hosting : this.state.hosting,
-          dueDate : this.state.date,
+          dueDate : dueDate,
           status : 'Requested'
         }).then(service=>{
           this.setState({loading:false})

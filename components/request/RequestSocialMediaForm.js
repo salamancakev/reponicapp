@@ -20,40 +20,40 @@ import { connect } from 'react-redux'
             usernameError : '',
             platforms : '',
             platformsError :'',
-            date : null,
+            date : '',
             loading : false
         }
     }
 
     onRequestService(){
-
-      if(this.state.details == ''){
+      
+      let dueDate = this.state.date
+      if(this.state.details == '' || this.state.description == '' || this.state.username == '' || this.state.platforms == ''){
+       if(this.state.details == ''){
         this.setState({detailsError : 'Please fill in this field'})
-        return false 
        }
       if(this.state.description == ''){
         this.setState({descriptionError : 'Please fill in this field'})
-        return false 
        }
       if(this.state.username == ''){
         this.setState({usernameError : 'Please fill in this field'})
-        return false 
        }
       if(this.state.platforms == ''){
         this.setState({platformsError : 'Please fill in this field'})
-        return false 
-       }
+       } 
+       return false 
+      }
+      
 
-      if(this.state.date == null){
+      if(dueDate == ''){
         let date = new Date()
-        let day = date.getDay()
+        date.setDate(date.getDate() + 7)
+        let day = date.getDate() 
         let month = date.getMonth() + 1
         let year = date.getFullYear()
-
-        let dueDate = day+'/'+month+'/'+year
-        this.setState({date : dueDate})
+        dueDate = day+'/'+month+'/'+year
       }
-
+        
 
         this.setState({loading : true})
         firestore().collection('services').add({
@@ -61,7 +61,11 @@ import { connect } from 'react-redux'
           type : 'Social Media',
           level : this.state.level,
           service : this.state.service,
-          dueDate : this.state.date,
+          description : this.state.description,
+          details : this.state.details,
+          platforms : this.state.platforms,
+          username : this.state.username,
+          dueDate : dueDate,
           status : 'Requested'
         }).then(service=>{
           this.setState({loading:false})
@@ -75,8 +79,8 @@ import { connect } from 'react-redux'
         }).catch(error=>{
           this.setState({loading:false})
           console.error(error)
-        })
-      }
+          })
+        }
 
       async openDatePicker(){
         try {
@@ -109,12 +113,13 @@ import { connect } from 'react-redux'
     <Picker.Item label="Professional" value="Professional" />
     </Picker>
     </View>
-    <Input containerStyle={styles.inputBox} placeholder="Short Description" onChangeText={description=>{this.setState({description})}} errorStyle={{color : 'red'}} errorMessage={this.state.descrptionError}/>
+    <Input containerStyle={styles.inputBox} placeholder="Short Description" onChangeText={description=>{this.setState({description})}} errorStyle={{color : 'red'}} errorMessage={this.state.descriptionError}/>
     <Input containerStyle={styles.inputBox} placeholder="Relevant Details" onChangeText={details=>{this.setState({details})}} errorStyle={{color : 'red'}} errorMessage={this.state.detailsError}/>
     <Input containerStyle={styles.inputBox} placeholder="Account Username" onChangeText={username=>{this.setState({username})}} errorStyle={{color : 'red'}} errorMessage={this.state.usernameError}/>
+    <Input containerStyle={styles.inputBox} placeholder="Social Media Platforms" onChangeText={platforms=>{this.setState({platforms})}} errorStyle={{color : 'red'}} errorMessage={this.state.platformsError}/>
     
     <View style={styles.dateContainer}>
-      <Text style={{fontSize:16}} > {!this.state.date ? 'Select due date' : 'Due date: '+this.state.date} </Text>
+      <Text style={{fontSize:16}} > {this.state.date=='' ? 'Select due date' : 'Due date: '+this.state.date} </Text>
       <Button containerStyle={{marginVertical: 10}} titleStyle={{fontSize : 16}} 
     title="Due Date"  raised={true} onPress={()=>this.openDatePicker()} />
     </View>
