@@ -16,6 +16,7 @@ import ReponicApp from './ReponicApp'
 const initialState = {
   userAuth : null,
   userInfo : null,
+  fcmToken : null,
 }
 
 const reducer = (state = initialState, action) =>{
@@ -23,7 +24,9 @@ const reducer = (state = initialState, action) =>{
     case 'UPDATE_AUTH':
       return {userAuth : action.userAuth}
     case 'UPDATE_INFO':
-      return {userAuth : state.userAuth, userInfo : action.userInfo}
+      return {userAuth : state.userAuth, userInfo : action.userInfo, fcmToken : state.fcmToken}
+    case 'UPDATE_TOKEN':
+      return {userAuth : state.userAuth, userInfo : state.userInfo, fcmToken : action.fcmToken}
     default:
   }
   return state
