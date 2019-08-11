@@ -12,8 +12,11 @@ import { connect } from 'react-redux'
             level : 'Beginner',
             service : 'Web Design',
             topic : '',
+            topicError : '',
             details : '',
+            detailsError : '',
             name : '',
+            nameError : '',
             hasDomain : false,
             domain : '',
             hasHosting : false,
@@ -24,6 +27,32 @@ import { connect } from 'react-redux'
     }
 
     onRequestService(){
+
+      if(this.state.details == ''){
+        this.setState({detailsError : 'Please fill in this field'})
+        return false 
+       }
+
+       if(this.state.topic == ''){
+        this.setState({topicError : 'Please fill in this field'})
+        return false 
+       }
+
+       if(this.state.name == ''){
+        this.setState({nameError : 'Please fill in this field'})
+        return false 
+       }
+
+       if(this.state.date == null){
+        let date = new Date()
+        let day = date.getDay()
+        let month = date.getMonth() + 1
+        let year = date.getFullYear()
+
+        let dueDate = day+'/'+month+'/'+year
+        this.setState({date : dueDate})
+      }
+
         this.setState({loading : true})
         firestore().collection('services').add({
           clientID : this.props.userAuth.uid,
@@ -85,9 +114,9 @@ onValueChange={(itemValue, itemIndex) => this.setState({level: itemValue}) }>
 <Picker.Item label="Professional" value="Professional" />
 </Picker>
 </View>
-<Input containerStyle={styles.inputBox} placeholder="Website Topic" onChangeText={topic=>{this.setState({topic})}}/>
-<Input containerStyle={styles.inputBox} placeholder="Relevant Details" onChangeText={details=>{this.setState({details})}} />
-<Input containerStyle={styles.inputBox} placeholder="Brand Name" onChangeText={name=>{this.setState({name})}} />
+<Input containerStyle={styles.inputBox} placeholder="Website Topic" onChangeText={topic=>{this.setState({topic})}} errorStyle={{color : 'red'}} errorMessage={this.state.topicError}/>
+<Input containerStyle={styles.inputBox} placeholder="Relevant Details" onChangeText={details=>{this.setState({details})}} errorStyle={{color : 'red'}} errorMessage={this.state.detailsError}/>
+<Input containerStyle={styles.inputBox} placeholder="Brand Name" onChangeText={name=>{this.setState({name})}} errorStyle={{color : 'red'}} errorMessage={this.state.nameError}/>
 
 <CheckBox title="Do you have a domain?" center checked={this.state.hasDomain} onPress={()=>{this.setState({hasDomain : !this.state.hasDomain})}} />
 

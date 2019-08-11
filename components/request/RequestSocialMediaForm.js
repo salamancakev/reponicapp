@@ -13,15 +13,48 @@ import { connect } from 'react-redux'
             level : 'Beginner',
             service : 'Logo',
             description : '',
+            descriptionError : '',
             details : '',
+            detailsError : '',
             username : '',
+            usernameError : '',
             platforms : '',
+            platformsError :'',
             date : null,
             loading : false
         }
     }
 
     onRequestService(){
+
+      if(this.state.details == ''){
+        this.setState({detailsError : 'Please fill in this field'})
+        return false 
+       }
+      if(this.state.description == ''){
+        this.setState({descriptionError : 'Please fill in this field'})
+        return false 
+       }
+      if(this.state.username == ''){
+        this.setState({usernameError : 'Please fill in this field'})
+        return false 
+       }
+      if(this.state.platforms == ''){
+        this.setState({platformsError : 'Please fill in this field'})
+        return false 
+       }
+
+      if(this.state.date == null){
+        let date = new Date()
+        let day = date.getDay()
+        let month = date.getMonth() + 1
+        let year = date.getFullYear()
+
+        let dueDate = day+'/'+month+'/'+year
+        this.setState({date : dueDate})
+      }
+
+
         this.setState({loading : true})
         firestore().collection('services').add({
           clientID : this.props.userAuth.uid,
@@ -76,9 +109,9 @@ import { connect } from 'react-redux'
     <Picker.Item label="Professional" value="Professional" />
     </Picker>
     </View>
-    <Input containerStyle={styles.inputBox} placeholder="Short Description" onChangeText={description=>{this.setState({description})}}/>
-    <Input containerStyle={styles.inputBox} placeholder="Relevant Details" onChangeText={details=>{this.setState({details})}} />
-    <Input containerStyle={styles.inputBox} placeholder="Account Username" onChangeText={username=>{this.setState({username})}} />
+    <Input containerStyle={styles.inputBox} placeholder="Short Description" onChangeText={description=>{this.setState({description})}} errorStyle={{color : 'red'}} errorMessage={this.state.descrptionError}/>
+    <Input containerStyle={styles.inputBox} placeholder="Relevant Details" onChangeText={details=>{this.setState({details})}} errorStyle={{color : 'red'}} errorMessage={this.state.detailsError}/>
+    <Input containerStyle={styles.inputBox} placeholder="Account Username" onChangeText={username=>{this.setState({username})}} errorStyle={{color : 'red'}} errorMessage={this.state.usernameError}/>
     
     <View style={styles.dateContainer}>
       <Text style={{fontSize:16}} > {!this.state.date ? 'Select due date' : 'Due date: '+this.state.date} </Text>
