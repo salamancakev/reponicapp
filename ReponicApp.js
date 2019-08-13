@@ -48,14 +48,20 @@ class ReponicApp extends Component {
         firestore().collection('users').doc(this.props.userAuth.uid).get().then(doc=>{
           if(doc.exists){
         this.props.updateUserInfo(doc.data())
+        this.checkPermission()
+        this.createNotificationListeners()
+        console.log(doc.data())
+        if(doc.data().type == 'member'){
+          messaging().subscribeToTopic('member_notifications')
+        }
+        else{
+          messaging().unsubscribeFromTopic('member_notifications')
+        }
           }
     })
       }
       
     })
-
-    this.checkPermission()
-    this.createNotificationListeners()
   }
   
 
@@ -67,6 +73,10 @@ class ReponicApp extends Component {
     this.notificationOpenedListener();
   }
 
+
+  subscribeToTopics(type){
+
+  }
 
   async createNotificationListeners() {
     /*
@@ -82,8 +92,7 @@ class ReponicApp extends Component {
     * */
     this.notificationOpenedListener = notifications().onNotificationOpened((notificationOpen) => {
         const { title, body, data } = notificationOpen.notification;
-        console.log(data)
-        this.showAlert(title, body);
+        this.showAlert('New Jobs', 'You have new jobs waiting for you!');
     });
   
     /*
@@ -92,7 +101,7 @@ class ReponicApp extends Component {
     const notificationOpen = await notifications().getInitialNotification();
     if (notificationOpen) {
         const { title, body } = notificationOpen.notification;
-        this.showAlert(title, body);
+        this.showAlert('New Jobs', 'You have new jobs waiting for you!');
     }
     /*
     * Triggered for data only payload in foreground

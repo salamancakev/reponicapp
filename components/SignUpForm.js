@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { Text, View, StyleSheet, TextInput, Picker } from 'react-native'
 import { Button, Input, AirbnbRating, CheckBox} from "react-native-elements";
-import { auth, firestore } from "react-native-firebase";
+import { auth, firestore, messaging } from "react-native-firebase";
 import { connect } from 'react-redux'
 
 
