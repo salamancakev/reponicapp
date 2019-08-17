@@ -9,7 +9,8 @@ import {
     RequestServiceStackNavigator,
     PaymentMethodStackNavigator,
     HistoryStackNavigator,
-    CheckServiceStackNavigator} from '../navigator/AppStackNavigator'
+    CheckServiceStackNavigator,
+    JobListStackNavigator} from '../navigator/AppStackNavigator'
 
   const ClientAppStack = createDrawerNavigator({
     ClientHome : {
@@ -61,6 +62,13 @@ import {
             drawerIcon : (<Icon name="home" type="font-awesome" />)
         }
       },
+      JobList : {
+          screen : JobListStackNavigator,
+          navigationOptions : {
+              title : 'Job List',
+              drawerIcon : (<Icon name="suitcase" type="font-awesome" />)
+          }
+      }
     })
     
     const MemberAppContainer = createAppContainer(MemberAppStack)
