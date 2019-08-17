@@ -51,11 +51,14 @@ class ReponicApp extends Component {
         this.checkPermission()
         this.createNotificationListeners()
         console.log(doc.data())
-        if(doc.data().type == 'member'){
-          messaging().subscribeToTopic('member_notifications')
+        if(doc.data().type == 'member' && doc.data().status == 'Active'){
+          this.subscribeToTopics(doc.data().service)
         }
         else{
-          messaging().unsubscribeFromTopic('member_notifications')
+          messaging().unsubscribeFromTopic('graphic_design_notifications')
+          messaging().unsubscribeFromTopic('social_media_notifications')
+          messaging().unsubscribeFromTopic('web_design_notifications')
+          messaging().unsubscribeFromTopic('software_development_notifications')
         }
           }
     })
@@ -75,7 +78,35 @@ class ReponicApp extends Component {
 
 
   subscribeToTopics(type){
-
+    switch (type) {
+      case 'Graphic Design':
+        messaging().subscribeToTopic('graphic_design_notifications')
+        messaging().unsubscribeFromTopic('social_media_notifications')
+        messaging().unsubscribeFromTopic('web_design_notifications')
+        messaging().unsubscribeFromTopic('software_development_notifications')
+        break;
+      case 'Social Media':
+        messaging().subscribeToTopic('social_media_notifications')
+        messaging().unsubscribeFromTopic('graphic_design_notifications')
+        messaging().unsubscribeFromTopic('web_design_notifications')
+        messaging().unsubscribeFromTopic('software_development_notifications')
+        break;
+      case 'Web Design':
+        messaging().subscribeToTopic('web_design_notifications')
+        messaging().unsubscribeFromTopic('graphic_design_notifications')
+        messaging().unsubscribeFromTopic('social_media_notifications')
+        messaging().unsubscribeFromTopic('software_development_notifications')
+        break;
+      case 'Software Development':
+        messaging().subscribeToTopic('software_development_notifications')
+        messaging().unsubscribeFromTopic('graphic_design_notifications')
+        messaging().unsubscribeFromTopic('social_media_notifications')
+        messaging().unsubscribeFromTopic('web_design_notifications')
+        break;
+    
+      default:
+        break;
+    }
   }
 
   async createNotificationListeners() {

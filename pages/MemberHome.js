@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { Text, View, StatusBar } from 'react-native'
 import { Button, Icon } from 'react-native-elements'
 import { connect } from "react-redux";
-import { auth, firestore } from "react-native-firebase";
+import { auth, firestore, messaging } from "react-native-firebase";
 class MemberHomeScreen extends Component {
 
       constructor(){
@@ -28,6 +28,45 @@ class MemberHomeScreen extends Component {
       } 
     }
 
+    subscribeToTopics(type){
+      switch (type) {
+        case 'Graphic Design':
+          messaging().subscribeToTopic('graphic_design_notifications')
+          messaging().unsubscribeFromTopic('social_media_notifications')
+          messaging().unsubscribeFromTopic('web_design_notifications')
+          messaging().unsubscribeFromTopic('software_development_notifications')
+          break;
+        case 'Social Media':
+          messaging().subscribeToTopic('social_media_notifications')
+          messaging().unsubscribeFromTopic('graphic_design_notifications')
+          messaging().unsubscribeFromTopic('web_design_notifications')
+          messaging().unsubscribeFromTopic('software_development_notifications')
+          break;
+        case 'Web Design':
+          messaging().subscribeToTopic('web_design_notifications')
+          messaging().unsubscribeFromTopic('graphic_design_notifications')
+          messaging().unsubscribeFromTopic('social_media_notifications')
+          messaging().unsubscribeFromTopic('software_development_notifications')
+          break;
+        case 'Software Development':
+          messaging().subscribeToTopic('software_development_notifications')
+          messaging().unsubscribeFromTopic('graphic_design_notifications')
+          messaging().unsubscribeFromTopic('social_media_notifications')
+          messaging().unsubscribeFromTopic('web_design_notifications')
+          break;
+      
+        default:
+          break;
+    }
+     }
+
+    unsubscribeFromTopics(){
+      messaging().unsubscribeFromTopic('graphic_design_notifications')
+      messaging().unsubscribeFromTopic('social_media_notifications')
+      messaging().unsubscribeFromTopic('web_design_notifications')
+      messaging().unsubscribeFromTopic('software_development_notifications')
+    }
+
     onChangeStatus(){
       this.setState({
         loading : true
@@ -45,6 +84,7 @@ class MemberHomeScreen extends Component {
           }
 
           this.props.updateUserInfo(user)
+          this.unsubscribeFromTopics()
 
           this.setState({
             loading : false
@@ -67,6 +107,7 @@ class MemberHomeScreen extends Component {
           }
 
           this.props.updateUserInfo(user)
+          this.subscribeToTopics(this.props.userInfo.service)
 
           this.setState({
             loading : false
