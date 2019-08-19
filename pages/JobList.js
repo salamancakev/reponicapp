@@ -58,9 +58,60 @@ class JobListScreen extends Component {
     }
 
     listJobs(){
-        let jobs = this.state.jobs
-        console.log(jobs)
-        jobs.map(value=> {return (<Text> {value.data.description} </Text>)} )
+     return (<ScrollView>
+        {this.state.jobs.map((value, key)=> {
+            if(value.data.type == 'Social Media'){
+              return (<ListItem key={key} 
+            leftIcon={ <Icon name='share-alt' type='font-awesome' />} 
+            title='Social Media' 
+            subtitle={value.data.description}
+            chevron
+            onPress={()=>this.props.navigation.navigate('JobDetails',
+            {
+              jobDetails : value.data
+            })}
+             />)
+            }
+
+            else if(value.data.type == 'Web Design'){
+              return (<ListItem key={key} 
+                leftIcon={ <Icon name='window-maximize' type='font-awesome' />} 
+                title='Web Design' 
+                subtitle={value.data.description}
+                chevron
+                onPress={()=>this.props.navigation.navigate('JobDetails',
+                {
+                  jobDetails : value.data
+                })}
+                 />)
+            }
+
+            else if(value.data.type == 'Software Development'){
+              return (<ListItem key={key} 
+                leftIcon={ <Icon name='database' type='font-awesome' />} 
+                title='Software Development' 
+                subtitle={value.data.description}
+                chevron
+                onPress={()=>this.props.navigation.navigate('JobDetails',
+                {
+                  jobDetails : value.data
+                })}
+                 />)
+            }
+            else{
+              return (<ListItem key={key} 
+                leftIcon={ <Icon name='paint-brush' type='font-awesome' />} 
+                title='Graphic Design' 
+                subtitle={value.data.description}
+                chevron
+                onPress={()=>this.props.navigation.navigate('JobDetails',
+                {
+                  jobDetails : value.data
+                })}
+                 />)
+            }
+            } )}
+     </ScrollView>)   
         }
         
 
@@ -69,16 +120,7 @@ class JobListScreen extends Component {
             return <ActivityIndicator/>
         }
         else{
-         return (<ScrollView>
-            {this.state.jobs.map((value, key)=> {
-                console.log(value)
-                return (<ListItem key={key} 
-                leftIcon={ <Icon name='share-alt' type='font-awesome' />} 
-                title='Social Media' 
-                subtitle={value.data.description}
-                chevron
-                 />)} )}
-         </ScrollView>)   
+         return this.listJobs() 
         }
             
             

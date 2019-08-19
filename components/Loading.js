@@ -10,7 +10,8 @@ import {
     PaymentMethodStackNavigator,
     HistoryStackNavigator,
     CheckServiceStackNavigator,
-    JobListStackNavigator} from '../navigator/AppStackNavigator'
+    JobListStackNavigator,
+    JobDetailsStackNavigator} from '../navigator/AppStackNavigator'
 
   const ClientAppStack = createDrawerNavigator({
     ClientHome : {

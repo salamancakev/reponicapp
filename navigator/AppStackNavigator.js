@@ -6,6 +6,7 @@ import {CheckServicesScreen} from '../pages/CheckServices'
 import { PaymentMethodScreen } from "../pages/PaymentMethod";
 import { HistoryScreen } from "../pages/History";
 import JobListScreen from "../pages/JobList";
+import { JobDetailsScreen } from "../pages/JobDetails";
 
 export const ClientHomeStackNavigator = createStackNavigator({
     ClientHome : ClientHomeScreen
@@ -32,5 +33,6 @@ export const HistoryStackNavigator = createStackNavigator({
 })
 
 export const JobListStackNavigator = createStackNavigator({
-    JobList : JobListScreen
+    JobList : JobListScreen,
+    JobDetails : JobDetailsScreen
 })
