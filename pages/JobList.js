@@ -35,10 +35,10 @@ class JobListScreen extends Component {
      let jobs = this.state.jobs
      console.log(service)
      
-     firestore().collection('services').where('type', '==', service).get().then(snapshot=>{
+     firestore().collection('services').where('type', '==', service).where('status', '==', 'Requested').get().then(snapshot=>{
         if (snapshot.empty) {
             console.log('No matching documents.');
-            return;
+            this.setState({loading :false})
           }  
       
           snapshot.forEach(doc => {
@@ -58,6 +58,12 @@ class JobListScreen extends Component {
     }
 
     listJobs(){
+      if(this.state.jobs.length == 0){
+        return (<View>
+          <Text>There are no available jobs at this moment</Text>
+        </View>
+        )
+      }
      return (<ScrollView>
         {this.state.jobs.map((value, key)=> {
             if(value.data.type == 'Social Media'){
@@ -68,7 +74,8 @@ class JobListScreen extends Component {
             chevron
             onPress={()=>this.props.navigation.navigate('JobDetails',
             {
-              jobDetails : value.data
+              jobDetails : value.data,
+              jobID : value.id
             })}
              />)
             }
@@ -77,11 +84,12 @@ class JobListScreen extends Component {
               return (<ListItem key={key} 
                 leftIcon={ <Icon name='window-maximize' type='font-awesome' />} 
                 title='Web Design' 
-                subtitle={value.data.description}
+                subtitle={value.data.name}
                 chevron
                 onPress={()=>this.props.navigation.navigate('JobDetails',
                 {
-                  jobDetails : value.data
+                  jobDetails : value.data,
+                  jobID : value.id
                 })}
                  />)
             }
@@ -94,7 +102,8 @@ class JobListScreen extends Component {
                 chevron
                 onPress={()=>this.props.navigation.navigate('JobDetails',
                 {
-                  jobDetails : value.data
+                  jobDetails : value.data,
+                  jobID : value.id
                 })}
                  />)
             }
@@ -102,11 +111,12 @@ class JobListScreen extends Component {
               return (<ListItem key={key} 
                 leftIcon={ <Icon name='paint-brush' type='font-awesome' />} 
                 title='Graphic Design' 
-                subtitle={value.data.description}
+                subtitle={value.data.service}
                 chevron
                 onPress={()=>this.props.navigation.navigate('JobDetails',
                 {
-                  jobDetails : value.data
+                  jobDetails : value.data,
+                  jobID : value.id
                 })}
                  />)
             }

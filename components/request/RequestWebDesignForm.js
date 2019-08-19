@@ -18,9 +18,9 @@ import { connect } from 'react-redux'
             name : '',
             nameError : '',
             hasDomain : false,
-            domain : '',
+            domain : 'None',
             hasHosting : false,
-            hosting : '',
+            hosting : 'None',
             date : null,
             loading : false
         }

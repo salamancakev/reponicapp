@@ -11,7 +11,6 @@ import { connect } from 'react-redux'
         super()
         this.state = {
             level : 'Beginner',
-            service : 'Logo',
             description : '',
             descriptionError : '',
             details : '',
@@ -60,7 +59,6 @@ import { connect } from 'react-redux'
           clientID : this.props.userAuth.uid,
           type : 'Social Media',
           level : this.state.level,
-          service : this.state.service,
           description : this.state.description,
           details : this.state.details,
           platforms : this.state.platforms,

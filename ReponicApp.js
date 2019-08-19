@@ -7,7 +7,7 @@
  */
 
 import React, {Component} from 'react';
-import { Alert } from "react-native";
+import { Alert, ToastAndroid } from "react-native";
 import { createStackNavigator, createAppContainer } from "react-navigation";
 import { auth, firestore, messaging, notifications } from "react-native-firebase";
 import {connect} from 'react-redux'
@@ -115,7 +115,7 @@ class ReponicApp extends Component {
     * */
     this.notificationListener = notifications().onNotification((notification) => {
         const { title, body } = notification;
-        this.showAlert(title, body);
+        this.showToast(body);
     });
   
     /*
@@ -123,7 +123,7 @@ class ReponicApp extends Component {
     * */
     this.notificationOpenedListener = notifications().onNotificationOpened((notificationOpen) => {
         const { title, body, data } = notificationOpen.notification;
-        this.showAlert('New Jobs', 'You have new jobs waiting for you!');
+        this.showToast('You have new jobs waiting for you!');
     });
   
     /*
@@ -132,7 +132,7 @@ class ReponicApp extends Component {
     const notificationOpen = await notifications().getInitialNotification();
     if (notificationOpen) {
         const { title, body } = notificationOpen.notification;
-        this.showAlert('New Jobs', 'You have new jobs waiting for you!');
+        this.showToast('You have new jobs waiting for you!');
     }
     /*
     * Triggered for data only payload in foreground
@@ -143,14 +143,8 @@ class ReponicApp extends Component {
     });
   }
 
-  showAlert(title, body) {
-    Alert.alert(
-      title, body,
-      [
-          { text: 'OK', onPress: () => console.log('OK Pressed') },
-      ],
-      { cancelable: false },
-    );
+  showToast(message) {
+   ToastAndroid.show(message, ToastAndroid.LONG)
   }
 
   checkPermission(){
