@@ -12,7 +12,8 @@ export class LoginForm extends Component {
       password : '',
       emailError : '',
       passwordError : '',
-      authError : ''
+      authError : '',
+      loading : false
     }
   }
 
@@ -48,7 +49,9 @@ export class LoginForm extends Component {
 
 
   onLogin(){
+    this.setState({loading : true})
     if(!this.validate()){
+      this.setState({loading : false})
       return false;
     }
 
@@ -69,6 +72,7 @@ export class LoginForm extends Component {
           break;
       }
     })
+    this.setState({loading : false})
     }
     
   }
@@ -83,7 +87,7 @@ export class LoginForm extends Component {
         placeholder="Password" placeholderTextColor="#ffffff" secureTextEntry={true}
         onChangeText={password=> this.setState({password})} />
         <Button containerStyle={{marginVertical: 10}} buttonStyle={styles.loginBtn} titleStyle={{fontSize : 20}} 
-        title="Login" type="outline" raised={true} onPress={()=> this.onLogin()} />
+        title="Login" type="outline" raised={true} loading={this.state.loading} onPress={()=> this.onLogin()} />
         <Text style={{color: 'red'}}>{this.state.authError}</Text>
       </View>
     )

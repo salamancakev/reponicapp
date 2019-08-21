@@ -27,7 +27,8 @@ class SignUpForm extends Component {
       passwordError : '',
       idError : '',
       authError : '',
-      checked : false
+      checked : false,
+      loading : false
     }
   }
 
@@ -90,7 +91,9 @@ class SignUpForm extends Component {
 
 
    onSignup(){
+     this.setState({loading : true})
      if(!this.validate()){
+       this.setState({loading : false})
        return false
      }
 
@@ -137,7 +140,7 @@ class SignUpForm extends Component {
           break;
       }
     })
-    
+    this.setState({loading:false})
     }
     
    }
@@ -198,7 +201,7 @@ class SignUpForm extends Component {
   onPress = {() =>{this.setState({checked : !this.state.checked})}}
 />
         <Button containerStyle={{marginVertical: 10}} buttonStyle={styles.signupBtn} titleStyle={{fontSize : 20}} 
-        title="Sign Up" type="outline" raised={true} onPress={()=>this.onSignup()} />
+        title="Sign Up" type="outline" raised={true} loading={this.state.loading} onPress={()=>this.onSignup()} />
           <Text style={{color : 'red'}}>{this.state.authError}</Text>
           </View>
         
