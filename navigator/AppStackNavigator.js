@@ -7,6 +7,8 @@ import { PaymentMethodScreen } from "../pages/PaymentMethod";
 import { HistoryScreen } from "../pages/History";
 import JobListScreen from "../pages/JobList";
 import  JobDetailsScreen  from "../pages/JobDetails";
+import  ChatScreen  from "../components/Chat";
+import  ChatListScreen  from "../pages/ChatList";
 
 export const ClientHomeStackNavigator = createStackNavigator({
     ClientHome : ClientHomeScreen
@@ -35,4 +37,8 @@ export const HistoryStackNavigator = createStackNavigator({
 export const JobListStackNavigator = createStackNavigator({
     JobList : JobListScreen,
     JobDetails : JobDetailsScreen
+})
+export const ChatStackNavigator = createStackNavigator({
+    ChatList : ChatListScreen,
+    Chat : ChatScreen
 })

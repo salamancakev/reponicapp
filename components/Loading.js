@@ -11,7 +11,8 @@ import {
     HistoryStackNavigator,
     CheckServiceStackNavigator,
     JobListStackNavigator,
-    JobDetailsStackNavigator} from '../navigator/AppStackNavigator'
+    ChatStackNavigator,
+    } from '../navigator/AppStackNavigator'
 
   const ClientAppStack = createDrawerNavigator({
     ClientHome : {
@@ -69,6 +70,13 @@ import {
               title : 'Job List',
               drawerIcon : (<Icon name="suitcase" type="font-awesome" />)
           }
+      },
+      Chat : {
+        screen : ChatStackNavigator,
+        navigationOptions : {
+            title : 'Chat',
+            drawerIcon : (<Icon name="comments" type="font-awesome" />)
+        }
       }
     })
     

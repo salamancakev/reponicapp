@@ -62,18 +62,27 @@ import { connect } from "react-redux";
       )
     }
 
-    onAcceptJob(){ 
+    onAcceptJob(){
+      let memberName = this.props.userInfo.firstName+' '+this.props.userInfo.lastName
       this.setState({loading : true})
       firestore().collection('services').doc(this.state.id).set({
         status : 'In Progress',
         memberID : this.props.userAuth.uid
       },
       {merge : true}).then(success=>{
-        this.setState({loading:false, disabled :true})
+        firestore().collection('chats').add({
+          clientID : this.state.data.clientID,
+          clientName : this.state.clientName,
+          memberID : this.props.userAuth.uid,
+          memberName : memberName,
+          messages : []
+        }).then(success2=>{
+          this.setState({loading:false, disabled :true})
         ToastAndroid.show(
           'You have accepted the job',
           ToastAndroid.LONG
         )
+        })
       }).catch(error=>{
         console.log(error)
         this.setState({loading :false})
