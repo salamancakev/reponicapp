@@ -34,11 +34,13 @@ export class ChatScreen extends Component {
       let chatID = this.props.navigation.getParam('chatID', null)
       let chatData = this.props.navigation.getParam('chatData', null)
       let messages = chatData.messages
-      messages = messages.reverse()
       if(messages.length != 0){
         messages.forEach((value, index)=>{
             let timestamp = value.createdAt
-        messages[index].createdAt = timestamp.toDate()
+            if(timestamp instanceof firestore.Timestamp) {
+              messages[index].createdAt = timestamp.toDate()
+            }
+        
           
       })
       }
@@ -52,7 +54,9 @@ export class ChatScreen extends Component {
 
       componentWillUnmount(){
         this.setState({
-          messages : []
+          messages : [],
+          chatID : null,
+          chatData : null
         })
       }
 

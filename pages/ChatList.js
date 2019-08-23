@@ -69,12 +69,13 @@ import { connect } from "react-redux";
                     if(messages.length!=0){
                         subtitle = messages[messages.length-1].text
                     }
+                    messages.reverse()
                     return (<ListItem key= {key}
                         leftIcon = {<Icon name='user' type='font-awesome' />}
                         title = {value.data.clientName}
                         subtitle = {subtitle}
                         chevron
-                        onPress={()=>this.props.navigation.navigate('Chat', {chatID : value.id, chatData : value.data})} />)
+                        onPress={()=>this.props.navigation.navigate('Chat', {chatID : value.id, chatData : value.data, messages : messages})} />)
                 })}
             </ScrollView>
         )  
