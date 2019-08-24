@@ -23,40 +23,46 @@ export class ChatScreen extends Component {
     constructor(){
         super()
         this.state = {
-            chatData : null,
             chatID : null,
             messages : [],
-            modified : false
         }
     }
 
     componentDidMount() {
       let chatID = this.props.navigation.getParam('chatID', null)
-      let chatData = this.props.navigation.getParam('chatData', null)
-      let messages = chatData.messages
-      if(messages.length != 0){
-        messages.forEach((value, index)=>{
-            let timestamp = value.createdAt
-            if(timestamp instanceof firestore.Timestamp) {
-              messages[index].createdAt = timestamp.toDate()
-            }
+      this.setState({chatID : chatID})
+      firestore().collection('chats').doc(chatID).onSnapshot(doc=>{
         
-          
+        if(doc.exists){
+          let messages = doc.data().messages
+          messages = messages.reverse()
+          if(messages.length != 0){
+            messages.forEach((value, index)=>{
+                let timestamp = value.createdAt
+                if(timestamp instanceof firestore.Timestamp) {
+                  messages[index].createdAt = timestamp.toDate()
+                }
+          })
+          }
+          console.log(messages)
+          this.setState({
+            messages :  messages
+            })
+        }
+
+        else{
+          console.log('Nothing found')
+        }
+        
       })
-      }
       
-      this.setState({
-        chatID : chatID,
-        chatData : chatData,
-        messages :  messages
-        })
+     
       }
 
       componentWillUnmount(){
         this.setState({
           messages : [],
-          chatID : null,
-          chatData : null
+          chatID : null
         })
       }
 
@@ -65,9 +71,7 @@ export class ChatScreen extends Component {
         firestore().collection('chats').doc(this.state.chatID).update({
           messages : firestore.FieldValue.arrayUnion(message)
         }).then(success=>{
-          this.setState(previousState => ({
-          messages: GiftedChat.append(previousState.messages, messages),
-        }))
+          return true
         console.log(this.state.messages)
         }).catch(error=>{
           console.log(error)
@@ -78,7 +82,7 @@ export class ChatScreen extends Component {
 
 
     render() {
-      if(this.state.chatData == null){
+      if(this.state.messages.length == 0){
         return <ActivityIndicator />
       }
       else{

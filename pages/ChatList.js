@@ -66,9 +66,6 @@ import { connect } from "react-redux";
                 {this.state.chats.map((value, key)=>{
                     let subtitle = 'Start chatting with your client!'
                     let messages = value.data.messages
-                    if(messages.length!=0){
-                        subtitle = messages[messages.length-1].text
-                    }
                     messages.reverse()
                     return (<ListItem key= {key}
                         leftIcon = {<Icon name='user' type='font-awesome' />}
