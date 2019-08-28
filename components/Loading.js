@@ -36,6 +36,14 @@ import {
             drawerIcon : (<Icon name="list" type="font-awesome" />)
         }
     },
+    
+    Chat : {
+        screen : ChatStackNavigator,
+        navigationOptions : {
+            title : 'Chats',
+            drawerIcon : (<Icon name="comments" type="font-awesome" />)
+        }
+    },
 
     History : {
         screen : HistoryStackNavigator,

@@ -107,7 +107,8 @@ class SignUpForm extends Component {
           username : this.state.username,
           email : this.state.email,
           id : this.state.id,
-          type : this.state.type
+          type : this.state.type,
+          fcmToken : this.props.fcmToken
         })
       
         }
@@ -122,7 +123,8 @@ class SignUpForm extends Component {
             type : this.state.type,
             service : this.state.service,
             level : this.state.level,
-            status : 'Inactive'
+            status : 'Inactive',
+            fcmToken : this.props.fcmToken
           })
         }
         })
@@ -216,6 +218,7 @@ export default connect(mapStateToProps)(SignUpForm)
 function mapStateToProps(state){
   return{
       userAuth : state.userAuth,
+      fcmToken : state.fcmToken
   }
 }
 

@@ -52,6 +52,7 @@ export class ChatScreen extends Component {
 
         else{
           console.log('Nothing found')
+          return false
         }
         
       })

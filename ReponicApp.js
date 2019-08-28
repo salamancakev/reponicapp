@@ -50,7 +50,6 @@ class ReponicApp extends Component {
         this.props.updateUserInfo(doc.data())
         this.checkPermission()
         this.createNotificationListeners()
-        console.log(doc.data())
         if(doc.data().type == 'member' && doc.data().status == 'Active'){
           this.subscribeToTopics(doc.data().service)
         }
@@ -65,6 +64,8 @@ class ReponicApp extends Component {
       }
       
     })
+
+    this.onTokenRefresh()
   }
   
 
@@ -74,6 +75,7 @@ class ReponicApp extends Component {
     }
     this.notificationListener();
     this.notificationOpenedListener();
+    this.onTokenRefresh();
   }
 
 
@@ -177,6 +179,14 @@ class ReponicApp extends Component {
         console.log('Permission rejected')
       })
   
+  }
+
+  onTokenRefresh(){
+    messaging().onTokenRefresh((token) =>{
+      firestore().collection('users').doc(this.props.userAuth.uid).update({fcmToken : token}).then(success=>{
+        this.props.updateToken(token)
+      })
+    })
   }
 
   render(){

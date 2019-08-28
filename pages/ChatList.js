@@ -64,7 +64,14 @@ import { connect } from "react-redux";
         return(
             <ScrollView>
                 {this.state.chats.map((value, key)=>{
-                    let subtitle = 'Start chatting with your client!'
+            
+                    let subtitle
+                    if(this.props.userInfo.type == 'member'){
+                        subtitle = 'Start chatting with your client!'
+                    }
+                    else{
+                        subtitle = 'Start chatting with your worker!'
+                    }
                     let messages = value.data.messages
                     messages.reverse()
                     return (<ListItem key= {key}
