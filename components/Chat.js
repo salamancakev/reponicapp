@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { Text, View, ActivityIndicator } from 'react-native'
 import { GiftedChat } from "react-native-gifted-chat";
 import { Icon } from "react-native-elements";
-import { firestore } from "react-native-firebase";
+import { firestore, functions } from "react-native-firebase";
 import { connect } from 'react-redux'
 
 export class ChatScreen extends Component {
@@ -25,12 +25,14 @@ export class ChatScreen extends Component {
         this.state = {
             chatID : null,
             messages : [],
+            chatData : null
         }
     }
 
     componentDidMount() {
       let chatID = this.props.navigation.getParam('chatID', null)
-      this.setState({chatID : chatID})
+      let chatData =  this.props.navigation.getParam('chatData', null)
+      this.setState({chatID : chatID, chatData : chatData})
       firestore().collection('chats').doc(chatID).onSnapshot(doc=>{
         
         if(doc.exists){
@@ -60,20 +62,37 @@ export class ChatScreen extends Component {
      
       }
 
-      componentWillUnmount(){
-        this.setState({
-          messages : [],
-          chatID : null
-        })
-      }
 
       onSend(messages = []) {
         let message = messages[0]
         firestore().collection('chats').doc(this.state.chatID).update({
           messages : firestore.FieldValue.arrayUnion(message)
         }).then(success=>{
-          return true
-        console.log(this.state.messages)
+          let send_message_notification = functions().httpsCallable('send_message_notification')
+          if(this.props.userInfo.type == 'member'){
+            send_message_notification({fcmToken : this.state.chatData.clientFcmToken, name : this.state.chatData.memberName})
+            .then(result=>{
+              if(result.sent){
+                return true
+              }
+              else{
+                console.log(result.error)
+                return false
+              }
+            })
+          }
+          else{
+            send_message_notification({fcmToken : this.state.chatData.memberFcmToken, name : this.state.chatData.clientName})
+            .then(result=>{
+              if(result.sent){
+                return true
+              }
+              else{
+                console.log(result.error)
+                return false
+              }
+            })
+          }
         }).catch(error=>{
           console.log(error)
           return false

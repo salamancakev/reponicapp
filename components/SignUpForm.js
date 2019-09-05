@@ -19,7 +19,6 @@ class SignUpForm extends Component {
       type : '',
       service : '',
       level : '',
-      id : '',
       firstNameError : '',
       lastNameError : '',
       usernameError : '',
@@ -58,9 +57,6 @@ class SignUpForm extends Component {
     if(this.state.username == ''){
       this.setState({usernameError : 'Please fill in this field'})
     }
-    if(this.state.id == ''){
-      this.setState({idError : 'Please fill in this field'})
-    }
     return false;
    }
  
@@ -98,15 +94,14 @@ class SignUpForm extends Component {
      }
 
      else{
-       auth().createUserWithEmailAndPassword(this.state.email, this.state.password).then(user=>{
+       auth().createUserWithEmailAndPassword(this.state.email, this.state.password).then(userCredential=>{
         auth().currentUser.sendEmailVerification().then(email=>{
           if(this.state.type = 'client'){
-          firestore().collection('users').doc(this.props.userAuth.uid).set({
+          firestore().collection('users').doc(userCredential.user.uid).set({
           firstName : this.state.firstName,
           lastName : this.state.lastName,
           username : this.state.username,
           email : this.state.email,
-          id : this.state.id,
           type : this.state.type,
           fcmToken : this.props.fcmToken
         })
@@ -114,12 +109,11 @@ class SignUpForm extends Component {
         }
 
         else{
-          firestore().collection('users').doc(this.props.userAuth.uid).set({
+          firestore().collection('users').doc(userCredential.user.uid).set({
             firstName : this.state.firstName,
             lastName : this.state.lastName,
             username : this.state.username,
             email : this.state.email,
-            id : this.state.id,
             type : this.state.type,
             service : this.state.service,
             level : this.state.level,
@@ -193,8 +187,6 @@ class SignUpForm extends Component {
         placeholder="Password" placeholderTextColor="#ffffff" secureTextEntry={true} onChangeText={password=>this.setState({password})}/>
         <Input inputContainerStyle={styles.inputBox} inputStyle={styles.inputText} errorStyle={{color : 'red'}} errorMessage={this.state.confirmPasswordError}
         placeholder="Confirm Password" placeholderTextColor="#ffffff" secureTextEntry={true} onChangeText={confirmPassword=>this.setState({confirmPassword})}/>
-        <Input inputContainerStyle={styles.inputBox} inputStyle={styles.inputText} errorStyle={{color : 'red'}} errorMessage={this.state.idError}
-        placeholder="ID" placeholderTextColor="#ffffff" onChangeText={id=>this.setState({id})} />
         {this.state.type == 'member' ? serviceInput : null}
         {this.state.type == 'member' ? levelInput : null}  
         <CheckBox

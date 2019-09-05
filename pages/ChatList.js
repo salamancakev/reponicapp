@@ -34,7 +34,8 @@ import { connect } from "react-redux";
     componentDidMount(){
         this.setState({loading :true})
         let chats = []
-        firestore().collection('chats').where('memberID', '==', this.props.userAuth.uid).get().then(snapshot=>{
+        if(this.props.userInfo.type == 'member'){
+          firestore().collection('chats').where('memberID', '==', this.props.userAuth.uid).get().then(snapshot=>{
             if(snapshot.empty){
                 this.setState({loading:false})
                 console.log('There are no chats')
@@ -50,7 +51,29 @@ import { connect } from "react-redux";
                 })
                 this.setState({chats : chats, loading :false})
             }
-        })
+        })  
+        }
+
+        else{
+            firestore().collection('chats').where('clientID', '==', this.props.userAuth.uid).get().then(snapshot=>{
+                if(snapshot.empty){
+                    this.setState({loading:false})
+                    console.log('There are no chats')
+                    return false
+                }
+                else{
+                    snapshot.forEach(doc=>{
+                        let chat = {
+                            data : doc.data(),
+                            id : doc.id
+                        }
+                        chats.push(chat)
+                    })
+                    this.setState({chats : chats, loading :false})
+                }
+            })  
+        }
+        
     }
 
     listChats(){
@@ -61,17 +84,12 @@ import { connect } from "react-redux";
             </View>)
         }
         else{
-        return(
+            if(this.props.userInfo.type == 'member'){
+             return(
             <ScrollView>
                 {this.state.chats.map((value, key)=>{
             
-                    let subtitle
-                    if(this.props.userInfo.type == 'member'){
-                        subtitle = 'Start chatting with your client!'
-                    }
-                    else{
-                        subtitle = 'Start chatting with your worker!'
-                    }
+                    let subtitle = 'Start chatting with your client!'
                     let messages = value.data.messages
                     messages.reverse()
                     return (<ListItem key= {key}
@@ -79,10 +97,29 @@ import { connect } from "react-redux";
                         title = {value.data.clientName}
                         subtitle = {subtitle}
                         chevron
-                        onPress={()=>this.props.navigation.navigate('Chat', {chatID : value.id, chatData : value.data, messages : messages})} />)
+                        onPress={()=>this.props.navigation.navigate('Chat', {chatID : value.id, chatData : value.data})} />)
                 })}
             </ScrollView>
-        )  
+        )   
+            }
+            else{
+                return(
+                    <ScrollView>
+                        {this.state.chats.map((value, key)=>{
+                            let subtitle = 'Start chatting with your worker!'
+                            let messages = value.data.messages
+                            messages.reverse()
+                            return (<ListItem key= {key}
+                                leftIcon = {<Icon name='user' type='font-awesome' />}
+                                title = {value.data.memberName}
+                                subtitle = {subtitle}
+                                chevron
+                                onPress={()=>this.props.navigation.navigate('Chat', {chatID : value.id, chatData : value.data})} />)
+                        })}
+                    </ScrollView>
+                ) 
+            }
+          
         }
         
     }

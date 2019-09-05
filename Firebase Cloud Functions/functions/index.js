@@ -59,4 +59,20 @@ exports.send_job_notification = functions.firestore.document('services/{serviceI
     
 })
 
+exports.send_message_notification = functions.https.onCall((data, context) =>{
+    let fcmToken = data.fcmToken
+    let senderName = data.name
+    let payload = {
+        notification : {
+            title : 'New Message',
+            body : 'You have a new message from '+senderName
+        }
+    }
+    admin.messaging().sendToDevice(fcmToken, payload).then(result=>{
+        return {sent : true}
+    }).catch(error=>{
+        return {sent : false, error : error}
+    })
+})
+
 

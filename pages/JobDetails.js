@@ -73,8 +73,10 @@ import { connect } from "react-redux";
         firestore().collection('chats').add({
           clientID : this.state.data.clientID,
           clientName : this.state.clientName,
+          clientFcmToken : this.state.data.clientFcmToken,
           memberID : this.props.userAuth.uid,
           memberName : memberName,
+          memberFcmToken : this.props.userInfo.fcmToken,
           messages : []
         }).then(success2=>{
           this.setState({loading:false, disabled :true})

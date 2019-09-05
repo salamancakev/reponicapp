@@ -125,7 +125,7 @@ class ReponicApp extends Component {
     * */
     this.notificationOpenedListener = notifications().onNotificationOpened((notificationOpen) => {
         const { title, body, data } = notificationOpen.notification;
-        this.showToast('You have new jobs waiting for you!');
+        this.showToast(body);
     });
   
     /*
@@ -134,7 +134,7 @@ class ReponicApp extends Component {
     const notificationOpen = await notifications().getInitialNotification();
     if (notificationOpen) {
         const { title, body } = notificationOpen.notification;
-        this.showToast('You have new jobs waiting for you!');
+        
     }
     /*
     * Triggered for data only payload in foreground
