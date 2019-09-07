@@ -27,14 +27,14 @@ class SignUpForm extends Component {
       idError : '',
       authError : '',
       checked : false,
-      loading : false
+      loading : false,
+      disabled : false,
     }
   }
 
   validate(){
-    console.log('Hey')
     this.setState({emailError : '', passwordError : '', nameError : ''})
-   if(this.state.email == '' || this.state.password == '' || this.state.name == ''){
+   if(this.state.email == '' || this.state.password == '' || this.state.firstName == '' || this.state.lastName == '' || this.state.username == '' || this.state.type == '' || this.state.confirmPassword == ''){
      if(this.state.email == ''){
       this.setState({emailError : 'Please fill in this field'})
     }
