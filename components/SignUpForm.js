@@ -118,6 +118,7 @@ class SignUpForm extends Component {
             service : this.state.service,
             level : this.state.level,
             status : 'Inactive',
+            verified : false,
             fcmToken : this.props.fcmToken
           })
         }

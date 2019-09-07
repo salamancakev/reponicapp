@@ -8,7 +8,8 @@ class MemberHomeScreen extends Component {
       constructor(){
         super()
         this.state = {
-          loading : false
+          loading : false,
+          disabled : false,
         }
       }
 
@@ -26,6 +27,12 @@ class MemberHomeScreen extends Component {
           fontWeight : 'bold'
         }
       } 
+    }
+
+    componentDidMount(){
+      if(!this.props.userInfo.verified){
+        this.setState({disabled : true})
+      }
     }
 
     subscribeToTopics(type){
@@ -80,7 +87,8 @@ class MemberHomeScreen extends Component {
             lastName : this.props.userInfo.lastName,
             status : 'Inactive',
             type : this.props.userInfo.type,
-            username : this.props.userInfo.username
+            username : this.props.userInfo.username,
+            verified : this.props.userInfo.verified
           }
 
           this.props.updateUserInfo(user)
@@ -103,11 +111,14 @@ class MemberHomeScreen extends Component {
             lastName : this.props.userInfo.lastName,
             status : 'Active',
             type : this.props.userInfo.type,
+            verified : this.props.userInfo.verified,
             username : this.props.userInfo.username
           }
-
+          
           this.props.updateUserInfo(user)
           this.subscribeToTopics(this.props.userInfo.service)
+
+          
 
           this.setState({
             loading : false
@@ -124,15 +135,17 @@ class MemberHomeScreen extends Component {
     }
 
     render() {
-      let activeButton = <Button title='Change status to Active' containerStyle={{marginBottom : 10}} buttonStyle={{width: 200, borderRadius : 20,  backgroundColor: '#5cb85c'}} loading={this.state.loading} onPress={()=>{this.onChangeStatus()}} />
-      let inactiveButton = <Button title='Change status to Inactive' containerStyle={{marginBottom : 10}} buttonStyle={{width: 200, borderRadius : 20,  backgroundColor: '#d9534f'}} loading={this.state.loading} onPress={()=>{this.onChangeStatus()}} />
+      let activeButton = <Button title='Change status to Active' containerStyle={{marginBottom : 10}} buttonStyle={{width: 200, borderRadius : 20,  backgroundColor: '#5cb85c'}} loading={this.state.loading} disabled={this.state.disabled} onPress={()=>{this.onChangeStatus()}} />
+      let inactiveButton = <Button title='Change status to Inactive' containerStyle={{marginBottom : 10}} buttonStyle={{width: 200, borderRadius : 20,  backgroundColor: '#d9534f'}} loading={this.state.loading} disabled={this.state.disabled} onPress={()=>{this.onChangeStatus()}} />
       let inactiveText = <Text style={{fontSize:15, marginBottom:15}} >To start recieving jobs, change your status to Active</Text>
+      let unverifiedText = <Text style={{fontSize:15, marginBottom:15}} >Our team needs to verify your account before you can start recieving jobs. We'll let you know once you're ready!</Text>
         return (
           <View style={{flex :1,justifyContent : 'center', alignItems : 'center'}}>
           <StatusBar backgroundColor='#0077c2' barStyle='light-content' />
           <Text style={{fontSize:20, marginBottom:15}} >Welcome {this.props.userInfo.username}!</Text>
           <Text style={{fontSize:20, marginBottom:15}} >Your status is: {this.props.userInfo.status}</Text>
           {this.props.userInfo.status == 'Inactive' ? inactiveText : null}
+          {!this.props.userInfo.verified ? unverifiedText : null}
           {this.props.userInfo.status == 'Inactive' ? activeButton : inactiveButton}
           <Button title='Logout' buttonStyle={{width: 200, borderRadius : 20}} onPress={()=> this.onLogout()} />
         </View>
