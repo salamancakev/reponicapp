@@ -58,7 +58,7 @@ class JobListScreen extends Component {
     }
 
     listJobs(){
-      if(this.state.jobs.length == 0){
+      if(this.state.jobs.length == 0 || !this.props.userInfo.verified){
         return (<View>
           <Text>There are no available jobs at this moment</Text>
         </View>
