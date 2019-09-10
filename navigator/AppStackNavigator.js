@@ -2,7 +2,8 @@ import { createStackNavigator } from "react-navigation";
 import  ClientHomeScreen  from "../pages/ClientHome";
 import MemberHomeScreen  from "../pages/MemberHome";
 import { RequestServiceScreen } from "../pages/RequestService";
-import {CheckServicesScreen} from '../pages/CheckServices'
+import CheckServicesScreen from '../pages/CheckServices'
+import { ServiceDetailsScreen } from "../pages/ServiceDetails";
 import { PaymentMethodScreen } from "../pages/PaymentMethod";
 import { HistoryScreen } from "../pages/History";
 import JobListScreen from "../pages/JobList";
@@ -23,7 +24,8 @@ export const RequestServiceStackNavigator = createStackNavigator({
 })
 
 export const CheckServiceStackNavigator = createStackNavigator({
-    CheckServicesScreen : CheckServicesScreen
+    CheckServices : CheckServicesScreen,
+    ServiceDetails : ServiceDetailsScreen
 })
 
 export const PaymentMethodStackNavigator = createStackNavigator({
