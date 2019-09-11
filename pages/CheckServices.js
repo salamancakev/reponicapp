@@ -8,9 +8,10 @@ import { firestore } from 'react-native-firebase'
 
   constructor(){
     super()
+    this.unsubscriber = null
     this.state = {
         jobs : [],
-        loading : true
+        loading : true,
     }
   }
 
@@ -31,15 +32,15 @@ import { firestore } from 'react-native-firebase'
     }
     componentDidMount(){
       let service = this.props.userInfo.service
-      let jobs = this.state.jobs
       console.log(service)
-      
-      firestore().collection('services').where('type', '==', service).where('clientID', '==', this.props.userAuth.uid).get().then(snapshot=>{
+      if(this.props.userInfo.type == 'client'){
+        this.unsubscriber= unsubscriber = firestore().collection('services').where('type', '==', service).where('clientID', '==', this.props.userAuth.uid).onSnapshot(doc=>{
          if (snapshot.empty) {
              console.log('No matching documents.');
              this.setState({loading :false})
+             return false
            }  
-       
+           let jobs = []
            snapshot.forEach(doc => {
              let job = {
                  id : doc.id,
@@ -50,10 +51,37 @@ import { firestore } from 'react-native-firebase'
            );
            this.setState({loading : false, jobs :jobs})
          })
-         .catch(err => {
-           console.log('Error getting documents', err);
-         });
+      }
+
+      else{
+        this.unsubscriber = firestore().collection('services').where('type', '==', service).where('memberID', '==', this.props.userAuth.uid).onSnapshot(snapshot=>{
+          if (snapshot.empty) {
+              console.log('No matching documents.');
+              this.setState({loading :false})
+              return false
+            } 
+
+            let jobs = []
+        
+            snapshot.forEach(doc => {
+              let job = {
+                  id : doc.id,
+                  data : doc.data()
+              };
+              jobs.push(job)
+            }
+            );
+            this.setState({loading : false, jobs :jobs})
+          })
+      }
+      
  
+     }
+
+     componentWillUnmount(){
+       if(this.unsubscriber){
+         this.unsubscriber()
+       }
      }
 
      listJobs(){

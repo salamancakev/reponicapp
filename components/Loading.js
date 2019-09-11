@@ -79,6 +79,13 @@ import {
               drawerIcon : (<Icon name="suitcase" type="font-awesome" />)
           }
       },
+      CheckServices: {
+          screen : CheckServiceStackNavigator,
+          navigationOptions : {
+              title : 'Check Services',
+              drawerIcon : (<Icon name="list" type="font-awesome" />)
+          }
+      },
       Chat : {
         screen : ChatStackNavigator,
         navigationOptions : {

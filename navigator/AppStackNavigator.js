@@ -3,7 +3,7 @@ import  ClientHomeScreen  from "../pages/ClientHome";
 import MemberHomeScreen  from "../pages/MemberHome";
 import { RequestServiceScreen } from "../pages/RequestService";
 import CheckServicesScreen from '../pages/CheckServices'
-import { ServiceDetailsScreen } from "../pages/ServiceDetails";
+import  ServiceDetailsScreen  from "../pages/ServiceDetails";
 import { PaymentMethodScreen } from "../pages/PaymentMethod";
 import { HistoryScreen } from "../pages/History";
 import JobListScreen from "../pages/JobList";

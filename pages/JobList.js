@@ -32,15 +32,14 @@ class JobListScreen extends Component {
 
     componentDidMount(){
      let service = this.props.userInfo.service
-     let jobs = this.state.jobs
      console.log(service)
      
-     firestore().collection('services').where('type', '==', service).where('status', '==', 'Requested').get().then(snapshot=>{
+     firestore().collection('services').where('type', '==', service).where('status', '==', 'Requested').onSnapshot(snapshot=>{
         if (snapshot.empty) {
             console.log('No matching documents.');
             this.setState({loading :false})
           }  
-      
+          let jobs = []
           snapshot.forEach(doc => {
             let job = {
                 id : doc.id,

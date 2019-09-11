@@ -1,15 +1,17 @@
 import React, { Component } from 'react'
-import { Text, View, ScrollView, ActivityIndicator, StyleSheet} from 'react-native'
+import { Text, View, ScrollView, ActivityIndicator, StyleSheet, Alert, ToastAndroid} from 'react-native'
 import { ListItem, Icon, Button } from "react-native-elements";
-import { firestore } from "react-native-firebase";
+import firebase, { firestore } from "react-native-firebase";
+import { connect } from "react-redux";
 
-export class ServiceDetailsScreen extends Component {
+ class ServiceDetailsScreen extends Component {
     constructor(){
         super()
         this.state = {
             data : null,
             id : null,
-            memberName : '',
+            name : '',
+            nameTitle : '',
             loading : false,
             disabled : false
         }
@@ -32,7 +34,8 @@ export class ServiceDetailsScreen extends Component {
         let data = this.props.navigation.getParam('jobDetails', null)
         let id = this.props.navigation.getParam('jobID', null)
         console.log(this.state) 
-        firestore().collection('users').doc(data.memberID).get().then(doc=>{
+        if(this.props.userInfo.type == 'client'){
+          firestore().collection('users').doc(data.memberID).get().then(doc=>{
           console.log(doc.data())
           let firstName = doc.data().firstName
           let lastName = doc.data().lastName
@@ -41,10 +44,29 @@ export class ServiceDetailsScreen extends Component {
           this.setState({
             data : data,
             id :id,
-            memberName : name
+            name : name,
+            nameTitle : 'Worker Name'
           })
   
         })
+        }
+        else{
+          firestore().collection('users').doc(data.clientID).get().then(doc=>{
+            console.log(doc.data())
+            let firstName = doc.data().firstName
+            let lastName = doc.data().lastName
+    
+            let name = firstName+' '+lastName
+            this.setState({
+              data : data,
+              id :id,
+              name : name,
+              nameTitle : 'Client Name'
+            })
+    
+          })
+        }
+        
       }
 
     showSocialMediaDetails(){
@@ -55,8 +77,8 @@ export class ServiceDetailsScreen extends Component {
           subtitle={this.state.data.type}
           />
           <ListItem leftIcon={ <Icon name='user' type='font-awesome' />} 
-          title='Worker Name' 
-          subtitle={this.state.memberName}
+          title={this.state.nameTitle}
+          subtitle={this.state.name}
           />
           <ListItem leftIcon={ <Icon name='edit' type='font-awesome' />} 
           title='Description' 
@@ -85,7 +107,11 @@ export class ServiceDetailsScreen extends Component {
           <ListItem leftIcon={ <Icon name='check-circle' type='font-awesome' />} 
           title='Status' 
           subtitle={this.state.data.status}
-          /> 
+          />
+          {this.props.userInfo.type == 'member' && this.state.data.status != 'Completed'
+          ? <Button containerStyle={{marginVertical: 10}} titleStyle={{fontSize : 16}} 
+          title="Mark Job as Completed"  raised={true} loading={this.state.loading} disabled={this.state.disabled} onPress={()=>this.onConfirm()} />
+          : null}
           </ScrollView>
           
         )
@@ -100,8 +126,8 @@ export class ServiceDetailsScreen extends Component {
           subtitle={this.state.data.type}
           />
           <ListItem leftIcon={ <Icon name='user' type='font-awesome' />} 
-          title='Worker Name' 
-          subtitle={this.state.memberName}
+          title={this.state.nameTitle}
+          subtitle={this.state.name}
           />
           <ListItem leftIcon={ <Icon name='paint-brush' type='font-awesome' />} 
           title='Type of Service' 
@@ -126,7 +152,11 @@ export class ServiceDetailsScreen extends Component {
           <ListItem leftIcon={ <Icon name='check-circle' type='font-awesome' />} 
           title='Status' 
           subtitle={this.state.data.status}
-          /> 
+          />
+          {this.props.userInfo.type == 'member' && this.state.data.status != 'Completed'
+          ? <Button containerStyle={{marginVertical: 10}} titleStyle={{fontSize : 16}} 
+          title="Mark Job as Completed"  raised={true} loading={this.state.loading} disabled={this.state.disabled} onPress={()=>this.onConfirm()} />
+          : null}
           </ScrollView>
         )
 
@@ -140,8 +170,8 @@ export class ServiceDetailsScreen extends Component {
           subtitle={this.state.data.type}
           />
           <ListItem leftIcon={ <Icon name='user' type='font-awesome' />} 
-          title='Worker Name' 
-          subtitle={this.state.memberName}
+          title={this.state.nameTitle}
+          subtitle={this.state.name}
           />
           <ListItem leftIcon={ <Icon name='clipboard' type='font-awesome' />} 
           title='Details' 
@@ -174,7 +204,11 @@ export class ServiceDetailsScreen extends Component {
           <ListItem leftIcon={ <Icon name='check-circle' type='font-awesome' />} 
           title='Status' 
           subtitle={this.state.data.status}
-          /> 
+          />
+          {this.props.userInfo.type == 'member' && this.state.data.status != 'Completed'
+          ? <Button containerStyle={{marginVertical: 10}} titleStyle={{fontSize : 16}} 
+          title="Mark Job as Completed"  raised={true} loading={this.state.loading} disabled={this.state.disabled} onPress={()=>this.onConfirm()} />
+          : null}
           </ScrollView>
         )
 
@@ -188,8 +222,8 @@ export class ServiceDetailsScreen extends Component {
           subtitle={this.state.data.type}
           />
           <ListItem leftIcon={ <Icon name='user' type='font-awesome' />} 
-          title='Worker Name' 
-          subtitle={this.state.memberName}
+          title={this.state.nameTitle}
+          subtitle={this.state.name}
           />
           <ListItem leftIcon={ <Icon name='clipboard' type='font-awesome' />} 
           title='Details' 
@@ -222,10 +256,40 @@ export class ServiceDetailsScreen extends Component {
           <ListItem leftIcon={ <Icon name='check-circle' type='font-awesome' />} 
           title='Status' 
           subtitle={this.state.data.status}
-          /> 
+          />
+          {this.props.userInfo.type == 'member' && this.state.data.status != 'Completed'
+          ? <Button containerStyle={{marginVertical: 10}} titleStyle={{fontSize : 16}} 
+          title="Mark Job as Completed"  raised={true} loading={this.state.loading} disabled={this.state.disabled} onPress={()=>this.onConfirm()} />
+          : null} 
           </ScrollView>
         )
 
+    }
+
+
+    onConfirm(){
+      Alert.alert(
+        'Finish Job',
+        'Only mark a job as completed if your client already has the final product of your service. Our team will verify this with your client and process your payment. Are you sure you want to mark this job as completed?',
+        [
+          {text : 'Yes', onPress: ()=> this.onFinishJob()},
+          {text : 'No', style : 'cancel'}
+        ]
+        
+      )
+    }
+
+    onFinishJob(){
+      this.setState({loading : true})
+      firestore().collection('services').doc(this.state.id).update({
+        status : 'Completed'
+      }).then(success=>{
+        this.setState({
+          loading : false,
+          disabled : true
+        })
+        ToastAndroid.show("You marked this job as completed. We'll let you know as soon as your client confirms this.", ToastAndroid.LONG)
+      })
     }
 
     render() {
@@ -248,5 +312,11 @@ export class ServiceDetailsScreen extends Component {
           }
     }
 }
+function mapStateToProps(state){
+  return{
+      userAuth : state.userAuth,
+      userInfo : state.userInfo
+  }
+}
 
-export default ServiceDetailsScreen
+export default connect(mapStateToProps)(ServiceDetailsScreen)
