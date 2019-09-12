@@ -3,6 +3,7 @@ import { Text, View, ScrollView, ActivityIndicator, StyleSheet, Alert, ToastAndr
 import { ListItem, Icon, Button } from "react-native-elements";
 import firebase, { firestore } from "react-native-firebase";
 import { connect } from "react-redux";
+import { SQIPCardEntry } from "react-native-square-in-app-payments";
 
  class ServiceDetailsScreen extends Component {
     constructor(){
@@ -15,6 +16,8 @@ import { connect } from "react-redux";
             loading : false,
             disabled : false
         }
+        this.onStartCardEntry = this.onStartCardEntry.bind(this);
+        this.onCardNonceRequestSuccess = this.onCardNonceRequestSuccess.bind(this);
     }
 
     static navigationOptions = ({navigation}) => {
@@ -32,12 +35,12 @@ import { connect } from "react-redux";
 
     componentDidMount(){
         let data = this.props.navigation.getParam('jobDetails', null)
-        let id = this.props.navigation.getParam('jobID', null)
-        console.log(this.state) 
+        let id = this.props.navigation.getParam('jobID', null) 
         if(this.props.userInfo.type == 'client'){
-          firestore().collection('users').doc(data.memberID).get().then(doc=>{
+          if(data.status != 'Requested'){
+           firestore().collection('users').doc(data.memberID).get().then(doc=>{
           console.log(doc.data())
-          let firstName = doc.data().firstName
+            let firstName = doc.data().firstName
           let lastName = doc.data().lastName
   
           let name = firstName+' '+lastName
@@ -47,8 +50,18 @@ import { connect } from "react-redux";
             name : name,
             nameTitle : 'Worker Name'
           })
+          
   
-        })
+        }) 
+          }
+          else{
+            this.setState({
+              data : data,
+              id :id,
+  
+            })
+          }
+          
         }
         else{
           firestore().collection('users').doc(data.clientID).get().then(doc=>{
@@ -76,10 +89,12 @@ import { connect } from "react-redux";
           title='Type of Job' 
           subtitle={this.state.data.type}
           />
-          <ListItem leftIcon={ <Icon name='user' type='font-awesome' />} 
+          {this.state.data.status != "Requested"
+          ? <ListItem leftIcon={ <Icon name='user' type='font-awesome' />} 
           title={this.state.nameTitle}
           subtitle={this.state.name}
           />
+          : null}  
           <ListItem leftIcon={ <Icon name='edit' type='font-awesome' />} 
           title='Description' 
           subtitle={this.state.data.description}
@@ -110,7 +125,11 @@ import { connect } from "react-redux";
           />
           {this.props.userInfo.type == 'member' && this.state.data.status != 'Completed'
           ? <Button containerStyle={{marginVertical: 10}} titleStyle={{fontSize : 16}} 
-          title="Mark Job as Completed"  raised={true} loading={this.state.loading} disabled={this.state.disabled} onPress={()=>this.onConfirm()} />
+          title="Mark Job as Completed"  raised={true} loading={this.state.loading} disabled={this.state.disabled} onPress={()=>this.onConfirm("member")} />
+          : null}
+          {this.props.userInfo.type == 'client' && this.state.data.status == 'Completed'
+          ? <Button containerStyle={{marginVertical: 10}} titleStyle={{fontSize : 16}} 
+          title="Confirm Job Completion"  raised={true} loading={this.state.loading} disabled={this.state.disabled} onPress={()=>this.onConfirm("client")} />
           : null}
           </ScrollView>
           
@@ -125,10 +144,12 @@ import { connect } from "react-redux";
           title='Type of Job' 
           subtitle={this.state.data.type}
           />
-          <ListItem leftIcon={ <Icon name='user' type='font-awesome' />} 
+          {this.state.data.status != "Requested"
+          ? <ListItem leftIcon={ <Icon name='user' type='font-awesome' />} 
           title={this.state.nameTitle}
           subtitle={this.state.name}
           />
+          : null} 
           <ListItem leftIcon={ <Icon name='paint-brush' type='font-awesome' />} 
           title='Type of Service' 
           subtitle={this.state.data.service}
@@ -155,7 +176,11 @@ import { connect } from "react-redux";
           />
           {this.props.userInfo.type == 'member' && this.state.data.status != 'Completed'
           ? <Button containerStyle={{marginVertical: 10}} titleStyle={{fontSize : 16}} 
-          title="Mark Job as Completed"  raised={true} loading={this.state.loading} disabled={this.state.disabled} onPress={()=>this.onConfirm()} />
+          title="Mark Job as Completed"  raised={true} loading={this.state.loading} disabled={this.state.disabled} onPress={()=>this.onConfirm("member")} />
+          : null}
+          {this.props.userInfo.type == 'client' && this.state.data.status == 'Completed'
+          ? <Button containerStyle={{marginVertical: 10}} titleStyle={{fontSize : 16}} 
+          title="Confirm Job Completion"  raised={true} loading={this.state.loading} disabled={this.state.disabled} onPress={()=>this.onConfirm("client")} />
           : null}
           </ScrollView>
         )
@@ -169,10 +194,12 @@ import { connect } from "react-redux";
           title='Type of Job' 
           subtitle={this.state.data.type}
           />
-          <ListItem leftIcon={ <Icon name='user' type='font-awesome' />} 
+          {this.state.data.status != "Requested"
+          ? <ListItem leftIcon={ <Icon name='user' type='font-awesome' />} 
           title={this.state.nameTitle}
           subtitle={this.state.name}
           />
+          : null} 
           <ListItem leftIcon={ <Icon name='clipboard' type='font-awesome' />} 
           title='Details' 
           subtitle={this.state.data.details}
@@ -207,7 +234,11 @@ import { connect } from "react-redux";
           />
           {this.props.userInfo.type == 'member' && this.state.data.status != 'Completed'
           ? <Button containerStyle={{marginVertical: 10}} titleStyle={{fontSize : 16}} 
-          title="Mark Job as Completed"  raised={true} loading={this.state.loading} disabled={this.state.disabled} onPress={()=>this.onConfirm()} />
+          title="Mark Job as Completed"  raised={true} loading={this.state.loading} disabled={this.state.disabled} onPress={()=>this.onConfirm("member")} />
+          : null}
+          {this.props.userInfo.type == 'client' && this.state.data.status == 'Completed'
+          ? <Button containerStyle={{marginVertical: 10}} titleStyle={{fontSize : 16}} 
+          title="Confirm Job Completion"  raised={true} loading={this.state.loading} disabled={this.state.disabled} onPress={()=>this.onConfirm("client")} />
           : null}
           </ScrollView>
         )
@@ -221,10 +252,12 @@ import { connect } from "react-redux";
           title='Type of Job' 
           subtitle={this.state.data.type}
           />
-          <ListItem leftIcon={ <Icon name='user' type='font-awesome' />} 
+          {this.state.data.status != "Requested"
+          ? <ListItem leftIcon={ <Icon name='user' type='font-awesome' />} 
           title={this.state.nameTitle}
           subtitle={this.state.name}
           />
+          : null} 
           <ListItem leftIcon={ <Icon name='clipboard' type='font-awesome' />} 
           title='Details' 
           subtitle={this.state.data.details}
@@ -259,28 +292,48 @@ import { connect } from "react-redux";
           />
           {this.props.userInfo.type == 'member' && this.state.data.status != 'Completed'
           ? <Button containerStyle={{marginVertical: 10}} titleStyle={{fontSize : 16}} 
-          title="Mark Job as Completed"  raised={true} loading={this.state.loading} disabled={this.state.disabled} onPress={()=>this.onConfirm()} />
+          title="Mark Job as Completed"  raised={true} loading={this.state.loading} disabled={this.state.disabled} onPress={()=>this.onConfirm("member")} />
           : null} 
+          {this.props.userInfo.type == 'client' && this.state.data.status == 'Completed'
+          ? <Button containerStyle={{marginVertical: 10}} titleStyle={{fontSize : 16}} 
+          title="Confirm Job Completion"  raised={true} loading={this.state.loading} disabled={this.state.disabled} onPress={()=>this.onConfirm("client")} />
+          : null}
           </ScrollView>
         )
 
     }
 
 
-    onConfirm(){
-      Alert.alert(
+    onConfirm(type){
+      if(type == 'member'){
+       Alert.alert(
         'Finish Job',
         'Only mark a job as completed if your client already has the final product of your service. Our team will verify this with your client and process your payment. Are you sure you want to mark this job as completed?',
         [
-          {text : 'Yes', onPress: ()=> this.onFinishJob()},
+          {text : 'Yes', onPress: ()=> this.onFinishJob(type)},
           {text : 'No', style : 'cancel'}
         ]
         
-      )
+      ) 
+      }
+
+      else{
+        Alert.alert(
+          'Finish Job',
+          'Only mark a job as completed if your worker has sent you the final product. Our team will verify this with your worker and will proceed to take your payment. Are you sure you want to mark this job as completed?',
+          [
+            {text : 'Yes', onPress: ()=> this.onFinishJob(type)},
+            {text : 'No', style : 'cancel'}
+          ]
+          
+        ) 
+      }
+      
     }
 
-    onFinishJob(){
-      this.setState({loading : true})
+    onFinishJob(type){
+      if(type == 'member'){
+       this.setState({loading : true})
       firestore().collection('services').doc(this.state.id).update({
         status : 'Completed'
       }).then(success=>{
@@ -289,8 +342,64 @@ import { connect } from "react-redux";
           disabled : true
         })
         ToastAndroid.show("You marked this job as completed. We'll let you know as soon as your client confirms this.", ToastAndroid.LONG)
-      })
+      }) 
+      }
+
+      else{
+        this.onStartCardEntry()
+      }
+      
     }
+/**
+   * Callback when the card entry is closed after call 'SQIPCardEntry.completeCardEntry'
+   */
+  onCardEntryComplete() {
+    // Update UI to notify user that the payment flow is completed
+  }
+
+  /**
+   * Callback when successfully get the card nonce details for processig
+   * card entry is still open and waiting for processing card nonce details
+   * @param {*} cardDetails
+   */
+  async onCardNonceRequestSuccess(cardDetails) {
+    try {
+      // take payment with the card details
+      // await chargeCard(cardDetails);
+
+      // payment finished successfully
+      // you must call this method to close card entry
+      await SQIPCardEntry.completeCardEntry(
+        this.onCardEntryComplete(),
+      );
+    } catch (ex) {
+      // payment failed to complete due to error
+      // notify card entry to show processing error
+      await SQIPCardEntry.showCardNonceProcessingError(ex.message);
+    }
+  }
+
+  /**
+   * Callback when card entry is cancelled and UI is closed
+   */
+  onCardEntryCancel() {
+    // Handle the cancel callback
+  }
+
+  /**
+   * An event listener to start card entry flow
+   */
+  async onStartCardEntry() {
+    const cardEntryConfig = {
+      collectPostalCode: false,
+    };
+    await SQIPCardEntry.startCardEntryFlow(
+      cardEntryConfig,
+      this.onCardNonceRequestSuccess,
+      this.onCardEntryCancel,
+    );
+  }
+    
 
     render() {
         if(this.state.data == null){

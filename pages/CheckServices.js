@@ -34,7 +34,7 @@ import { firestore } from 'react-native-firebase'
       let service = this.props.userInfo.service
       console.log(service)
       if(this.props.userInfo.type == 'client'){
-        this.unsubscriber= unsubscriber = firestore().collection('services').where('type', '==', service).where('clientID', '==', this.props.userAuth.uid).onSnapshot(doc=>{
+        this.unsubscriber = firestore().collection('services').where('clientID', '==', this.props.userAuth.uid).onSnapshot(snapshot=>{
          if (snapshot.empty) {
              console.log('No matching documents.');
              this.setState({loading :false})
@@ -49,6 +49,7 @@ import { firestore } from 'react-native-firebase'
              jobs.push(job)
            }
            );
+           console.log(jobs)
            this.setState({loading : false, jobs :jobs})
          })
       }
@@ -71,6 +72,7 @@ import { firestore } from 'react-native-firebase'
               jobs.push(job)
             }
             );
+            console.log(jobs)
             this.setState({loading : false, jobs :jobs})
           })
       }
