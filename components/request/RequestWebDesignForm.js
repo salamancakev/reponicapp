@@ -3,6 +3,8 @@ import { Text, View, Picker, StyleSheet, DatePickerAndroid, Alert } from 'react-
 import {Input, Button, CheckBox} from 'react-native-elements'
 import { firestore } from 'react-native-firebase'
 import { connect } from 'react-redux'
+import { SQIPCardEntry } from "react-native-square-in-app-payments";
+
 
  class RequestWebDesignForm extends Component {
 
@@ -24,9 +26,12 @@ import { connect } from 'react-redux'
             date : null,
             loading : false
         }
+        this.onStartCardEntry = this.onStartCardEntry.bind(this);
+        this.onCardNonceRequestSuccess = this.onCardNonceRequestSuccess.bind(this);
     }
 
     onRequestService(){
+      this.setState({loading : true})
       let dueDate = this.state.date
       if(this.state.details == '' || this.state.topic == '' || this.state.name == ''){
         if(this.state.details == ''){
@@ -40,6 +45,7 @@ import { connect } from 'react-redux'
        if(this.state.name == ''){
         this.setState({nameError : 'Please fill in this field'})
        }
+       this.setState({loading : false})
        return false 
       }
       
@@ -51,36 +57,92 @@ import { connect } from 'react-redux'
         let month = date.getMonth() + 1
         let year = date.getFullYear()
         dueDate = day+'/'+month+'/'+year
+        this.setState({date : dueDate})
       }
 
-        this.setState({loading : true})
-        firestore().collection('services').add({
-          clientID : this.props.userAuth.uid,
-          type : 'Web Design',
-          level : this.state.level,
-          service : this.state.service,
-          topic : this.state.topic,
-          details : this.state.details,
-          name : this.state.name,
-          domain : this.state.domain,
-          hosting : this.state.hosting,
-          dueDate : dueDate,
-          status : 'Requested'
-        }).then(service=>{
-          this.setState({loading:false})
-          Alert.alert(
-            'Service Requested',
-            'Your request has been sent. You will recieve a notification once one of our workers accepts the job.',
-            [
-              {text : 'OK', onPress: ()=>{console.log('OK pressed')}}
-            ]
-          )
-    
-        }).catch(error=>{
-          this.setState({loading:false})
-          console.error(error)
-        })
+        
+        this.onStartCardEntry()
+        
       }
+
+            /**
+   * Callback when the card entry is closed after call 'SQIPCardEntry.completeCardEntry'
+   */
+  onCardEntryComplete() {
+    // Update UI to notify user that the payment flow is completed
+    firestore().collection('services').add({
+      clientID : this.props.userAuth.uid,
+      type : 'Web Design',
+      level : this.state.level,
+      service : this.state.service,
+      topic : this.state.topic,
+      details : this.state.details,
+      name : this.state.name,
+      domain : this.state.domain,
+      hosting : this.state.hosting,
+      dueDate : this.state.date,
+      status : 'Requested'
+    }).then(service=>{
+      this.setState({loading:false})
+      Alert.alert(
+        'Service Requested',
+        'Your request has been sent. You will recieve a notification once one of our workers accepts the job.',
+        [
+          {text : 'OK', onPress: ()=>{console.log('OK pressed')}}
+        ]
+      )
+
+    }).catch(error=>{
+      this.setState({loading:false})
+      console.error(error)
+    })
+  }
+
+
+      
+        /**
+   * Callback when successfully get the card nonce details for processig
+   * card entry is still open and waiting for processing card nonce details
+   * @param {*} cardDetails
+   */
+  async onCardNonceRequestSuccess(cardDetails) {
+    try {
+      // take payment with the card details
+      // await chargeCard(cardDetails);
+
+      // payment finished successfully
+      // you must call this method to close card entry
+      await SQIPCardEntry.completeCardEntry(
+        this.onCardEntryComplete(),
+      );
+    } catch (ex) {
+      // payment failed to complete due to error
+      // notify card entry to show processing error
+      await SQIPCardEntry.showCardNonceProcessingError(ex.message);
+    }
+  }
+
+  /**
+   * Callback when card entry is cancelled and UI is closed
+   */
+  onCardEntryCancel() {
+    // Handle the cancel callback
+    console.log('Entry canceled')
+  }
+
+  /**
+   * An event listener to start card entry flow
+   */
+  async onStartCardEntry() {
+    const cardEntryConfig = {
+      collectPostalCode: false,
+    };
+    await SQIPCardEntry.startCardEntryFlow(
+      cardEntryConfig,
+      (cardDetails) => {this.onCardNonceRequestSuccess(cardDetails)},
+      this.onCardEntryCancel,
+    );
+  }
 
       async openDatePicker(){
         try {

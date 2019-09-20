@@ -3,6 +3,7 @@ import { Text, View, Picker, StyleSheet, DatePickerAndroid, Alert } from 'react-
 import {Input, Button} from 'react-native-elements'
 import { firestore } from 'react-native-firebase'
 import { connect } from 'react-redux'
+import { SQIPCardEntry } from "react-native-square-in-app-payments";
 
 
 export class RequestSoftwareDevelopmentForm extends Component {
@@ -19,6 +20,8 @@ export class RequestSoftwareDevelopmentForm extends Component {
             date : null,
             loading : false
         }
+        this.onStartCardEntry = this.onStartCardEntry.bind(this);
+        this.onCardNonceRequestSuccess = this.onCardNonceRequestSuccess.bind(this);
     }
 
     onRequestService(){

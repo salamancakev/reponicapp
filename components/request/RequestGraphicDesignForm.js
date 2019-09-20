@@ -3,6 +3,7 @@ import { Text, View, Picker, StyleSheet, DatePickerAndroid, Alert } from 'react-
 import {Input, Button} from 'react-native-elements'
 import { firestore } from 'react-native-firebase'
 import { connect } from 'react-redux'
+import { SQIPCardEntry } from "react-native-square-in-app-payments";
 
 class RequestGraphicDesignForm extends Component {
 
@@ -18,8 +19,11 @@ class RequestGraphicDesignForm extends Component {
             date : '',
             loading : false
         }
+        this.onStartCardEntry = this.onStartCardEntry.bind(this);
+        this.onCardNonceRequestSuccess = this.onCardNonceRequestSuccess.bind(this);
     }
     onRequestService(){
+      this.setState({loading : true})
       let dueDate =  this.state.date
 
       if(this.state.details == '' || this.state.colors == ''){
@@ -30,6 +34,7 @@ class RequestGraphicDesignForm extends Component {
       if(this.state.colors == ''){
         this.setState({colorsError : 'Please fill in this field'})
       } 
+      this.setState({loading : false})
       return false
       }
 
@@ -43,17 +48,26 @@ class RequestGraphicDesignForm extends Component {
         let year = date.getFullYear()
 
         dueDate = day+'/'+month+'/'+year
+        this.setState({date : dueDate})
       }
+      
+      this.onStartCardEntry()
+    }
 
-      this.setState({loading : true})
-      firestore().collection('services').add({
+
+    /**
+   * Callback when the card entry is closed after call 'SQIPCardEntry.completeCardEntry'
+   */
+  onCardEntryComplete() {
+    // Update UI to notify user that the payment flow is completed
+    firestore().collection('services').add({
         clientID : this.props.userAuth.uid,
         type : 'Graphic Design',
         level : this.state.level,
         service : this.state.service,
         details : this.state.details,
         colors : this.state.colors,
-        dueDate : dueDate,
+        dueDate : this.state.date,
         status : 'Requested'
       }).then(service=>{
         this.setState({loading:false})
@@ -68,7 +82,50 @@ class RequestGraphicDesignForm extends Component {
         this.setState({loading:false})
         console.error(error)
       })
+  }
+
+  /**
+   * Callback when successfully get the card nonce details for processig
+   * card entry is still open and waiting for processing card nonce details
+   * @param {*} cardDetails
+   */
+  async onCardNonceRequestSuccess(cardDetails) {
+    try {
+      // take payment with the card details
+      // await chargeCard(cardDetails);
+
+      // payment finished successfully
+      // you must call this method to close card entry
+      await SQIPCardEntry.completeCardEntry(
+        this.onCardEntryComplete(),
+      );
+    } catch (ex) {
+      // payment failed to complete due to error
+      // notify card entry to show processing error
+      await SQIPCardEntry.showCardNonceProcessingError(ex.message);
     }
+  }
+
+  /**
+   * Callback when card entry is cancelled and UI is closed
+   */
+  onCardEntryCancel() {
+    // Handle the cancel callback
+  }
+
+  /**
+   * An event listener to start card entry flow
+   */
+  async onStartCardEntry() {
+    const cardEntryConfig = {
+      collectPostalCode: false,
+    };
+    await SQIPCardEntry.startCardEntryFlow(
+      cardEntryConfig,
+      (cardDetails)=>{this.onCardNonceRequestSuccess(cardDetails)},
+      this.onCardEntryCancel,
+    );
+  }
 
 
 

@@ -16,8 +16,7 @@ import { SQIPCardEntry } from "react-native-square-in-app-payments";
             loading : false,
             disabled : false
         }
-        this.onStartCardEntry = this.onStartCardEntry.bind(this);
-        this.onCardNonceRequestSuccess = this.onCardNonceRequestSuccess.bind(this);
+        
     }
 
     static navigationOptions = ({navigation}) => {
@@ -335,7 +334,7 @@ import { SQIPCardEntry } from "react-native-square-in-app-payments";
       if(type == 'member'){
        this.setState({loading : true})
       firestore().collection('services').doc(this.state.id).update({
-        status : 'Completed'
+        status : 'Waiting for confirmation'
       }).then(success=>{
         this.setState({
           loading : false,
@@ -346,59 +345,19 @@ import { SQIPCardEntry } from "react-native-square-in-app-payments";
       }
 
       else{
-        this.onStartCardEntry()
+        this.setState({loading : true})
+      firestore().collection('services').doc(this.state.id).update({
+        status : 'Completed'
+      }).then(success=>{
+        this.setState({
+          loading : false,
+          disabled : true
+        })
+        ToastAndroid.show("You marked this job as completed. Thanks for using Reponic App!", ToastAndroid.LONG)
+      }) 
       }
       
     }
-/**
-   * Callback when the card entry is closed after call 'SQIPCardEntry.completeCardEntry'
-   */
-  onCardEntryComplete() {
-    // Update UI to notify user that the payment flow is completed
-  }
-
-  /**
-   * Callback when successfully get the card nonce details for processig
-   * card entry is still open and waiting for processing card nonce details
-   * @param {*} cardDetails
-   */
-  async onCardNonceRequestSuccess(cardDetails) {
-    try {
-      // take payment with the card details
-      // await chargeCard(cardDetails);
-
-      // payment finished successfully
-      // you must call this method to close card entry
-      await SQIPCardEntry.completeCardEntry(
-        this.onCardEntryComplete(),
-      );
-    } catch (ex) {
-      // payment failed to complete due to error
-      // notify card entry to show processing error
-      await SQIPCardEntry.showCardNonceProcessingError(ex.message);
-    }
-  }
-
-  /**
-   * Callback when card entry is cancelled and UI is closed
-   */
-  onCardEntryCancel() {
-    // Handle the cancel callback
-  }
-
-  /**
-   * An event listener to start card entry flow
-   */
-  async onStartCardEntry() {
-    const cardEntryConfig = {
-      collectPostalCode: false,
-    };
-    await SQIPCardEntry.startCardEntryFlow(
-      cardEntryConfig,
-      this.onCardNonceRequestSuccess,
-      this.onCardEntryCancel,
-    );
-  }
     
 
     render() {
