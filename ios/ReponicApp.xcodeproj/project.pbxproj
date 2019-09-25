@@ -59,8 +59,6 @@
 		954983DE0D134F61A0B519D5 /* libRNGestureHandler.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C58A312A13584E318523263A /* libRNGestureHandler.a */; };
 		0263518E96564DC38DD8429C /* libRNGestureHandler-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 278576E992DD4F8A903D8B6D /* libRNGestureHandler-tvOS.a */; };
 		AD093670AB80499392464B8B /* libRNFirebase.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DB642233DC1049E9B4B9A0B3 /* libRNFirebase.a */; };
-		E368FEF553054BED972F793E /* libRNSquareInAppPayments.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1430A6CC36CE46878AD02C78 /* libRNSquareInAppPayments.a */; };
-		911A46203863419D8545C390 /* RNSquareInAppPayments-Resources.bundle in Resources */ = {isa = PBXBuildFile; fileRef = D5079DE19AED46EC92D80C12 /* RNSquareInAppPayments-Resources.bundle */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -391,9 +389,6 @@
 		278576E992DD4F8A903D8B6D /* libRNGestureHandler-tvOS.a */ = {isa = PBXFileReference; name = "libRNGestureHandler-tvOS.a"; path = "libRNGestureHandler-tvOS.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
 		BD1E28E90DF64B8B8F5EEDB5 /* RNFirebase.xcodeproj */ = {isa = PBXFileReference; name = "RNFirebase.xcodeproj"; path = "../node_modules/react-native-firebase/ios/RNFirebase.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
 		DB642233DC1049E9B4B9A0B3 /* libRNFirebase.a */ = {isa = PBXFileReference; name = "libRNFirebase.a"; path = "libRNFirebase.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
-		A2ABB1178180403280F803FD /* RNSquareInAppPayments.xcodeproj */ = {isa = PBXFileReference; name = "RNSquareInAppPayments.xcodeproj"; path = "../node_modules/react-native-square-in-app-payments/ios/RNSquareInAppPayments.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
-		1430A6CC36CE46878AD02C78 /* libRNSquareInAppPayments.a */ = {isa = PBXFileReference; name = "libRNSquareInAppPayments.a"; path = "libRNSquareInAppPayments.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
-		D5079DE19AED46EC92D80C12 /* RNSquareInAppPayments-Resources.bundle */ = {isa = PBXFileReference; name = "RNSquareInAppPayments-Resources.bundle"; path = "RNSquareInAppPayments-Resources.bundle"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.plug-in; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -425,8 +420,6 @@
 				AEF6701E317442BCAB6D93C2 /* libRNVectorIcons.a in Frameworks */,
 				954983DE0D134F61A0B519D5 /* libRNGestureHandler.a in Frameworks */,
 				AD093670AB80499392464B8B /* libRNFirebase.a in Frameworks */,
-				E368FEF553054BED972F793E /* libRNSquareInAppPayments.a in Frameworks */,
-				911A46203863419D8545C390 /* RNSquareInAppPayments-Resources.bundle in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -621,7 +614,6 @@
 				B894F4D742F54FDAA3FAF0B6 /* RNVectorIcons.xcodeproj */,
 				74AB533C5CFD414390ABE67B /* RNGestureHandler.xcodeproj */,
 				BD1E28E90DF64B8B8F5EEDB5 /* RNFirebase.xcodeproj */,
-				A2ABB1178180403280F803FD /* RNSquareInAppPayments.xcodeproj */,
 			);
 			name = Libraries;
 			sourceTree = "<group>";
@@ -1288,16 +1280,12 @@
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/ReponicApp.app/ReponicApp";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/$(TARGET_NAME)\"",
-					"\"$(SRCROOT)/$(TARGET_NAME)\"",
-					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)\..\node_modules\react-native-vector-icons\RNVectorIconsManager",
 					"$(SRCROOT)\..\node_modules\react-native-gesture-handler\ios/**",
 					"$(SRCROOT)\..\node_modules\react-native-firebase\ios\RNFirebase/**",
-					"$(SRCROOT)\..\node_modules\react-native-square-in-app-payments\ios/**",
 				);
 			};
 			name = Debug;
@@ -1319,16 +1307,12 @@
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/ReponicApp.app/ReponicApp";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/$(TARGET_NAME)\"",
-					"\"$(SRCROOT)/$(TARGET_NAME)\"",
-					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)\..\node_modules\react-native-vector-icons\RNVectorIconsManager",
 					"$(SRCROOT)\..\node_modules\react-native-gesture-handler\ios/**",
 					"$(SRCROOT)\..\node_modules\react-native-firebase\ios\RNFirebase/**",
-					"$(SRCROOT)\..\node_modules\react-native-square-in-app-payments\ios/**",
 				);
 			};
 			name = Release;
@@ -1354,7 +1338,6 @@
 					"$(SRCROOT)\..\node_modules\react-native-vector-icons\RNVectorIconsManager",
 					"$(SRCROOT)\..\node_modules\react-native-gesture-handler\ios/**",
 					"$(SRCROOT)\..\node_modules\react-native-firebase\ios\RNFirebase/**",
-					"$(SRCROOT)\..\node_modules\react-native-square-in-app-payments\ios/**",
 				);
 			};
 			name = Debug;
@@ -1379,7 +1362,6 @@
 					"$(SRCROOT)\..\node_modules\react-native-vector-icons\RNVectorIconsManager",
 					"$(SRCROOT)\..\node_modules\react-native-gesture-handler\ios/**",
 					"$(SRCROOT)\..\node_modules\react-native-firebase\ios\RNFirebase/**",
-					"$(SRCROOT)\..\node_modules\react-native-square-in-app-payments\ios/**",
 				);
 			};
 			name = Release;
@@ -1409,16 +1391,12 @@
 				TVOS_DEPLOYMENT_TARGET = 9.2;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/$(TARGET_NAME)\"",
-					"\"$(SRCROOT)/$(TARGET_NAME)\"",
-					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)\..\node_modules\react-native-vector-icons\RNVectorIconsManager",
 					"$(SRCROOT)\..\node_modules\react-native-gesture-handler\ios/**",
 					"$(SRCROOT)\..\node_modules\react-native-firebase\ios\RNFirebase/**",
-					"$(SRCROOT)\..\node_modules\react-native-square-in-app-payments\ios/**",
 				);
 			};
 			name = Debug;
@@ -1448,16 +1426,12 @@
 				TVOS_DEPLOYMENT_TARGET = 9.2;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/$(TARGET_NAME)\"",
-					"\"$(SRCROOT)/$(TARGET_NAME)\"",
-					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)\..\node_modules\react-native-vector-icons\RNVectorIconsManager",
 					"$(SRCROOT)\..\node_modules\react-native-gesture-handler\ios/**",
 					"$(SRCROOT)\..\node_modules\react-native-firebase\ios\RNFirebase/**",
-					"$(SRCROOT)\..\node_modules\react-native-square-in-app-payments\ios/**",
 				);
 			};
 			name = Release;
@@ -1486,16 +1460,12 @@
 				TVOS_DEPLOYMENT_TARGET = 10.1;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/$(TARGET_NAME)\"",
-					"\"$(SRCROOT)/$(TARGET_NAME)\"",
-					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)\..\node_modules\react-native-vector-icons\RNVectorIconsManager",
 					"$(SRCROOT)\..\node_modules\react-native-gesture-handler\ios/**",
 					"$(SRCROOT)\..\node_modules\react-native-firebase\ios\RNFirebase/**",
-					"$(SRCROOT)\..\node_modules\react-native-square-in-app-payments\ios/**",
 				);
 			};
 			name = Debug;
@@ -1524,16 +1494,12 @@
 				TVOS_DEPLOYMENT_TARGET = 10.1;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/$(TARGET_NAME)\"",
-					"\"$(SRCROOT)/$(TARGET_NAME)\"",
-					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)\..\node_modules\react-native-vector-icons\RNVectorIconsManager",
 					"$(SRCROOT)\..\node_modules\react-native-gesture-handler\ios/**",
 					"$(SRCROOT)\..\node_modules\react-native-firebase\ios\RNFirebase/**",
-					"$(SRCROOT)\..\node_modules\react-native-square-in-app-payments\ios/**",
 				);
 			};
 			name = Release;

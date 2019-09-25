@@ -3,8 +3,11 @@ import { Text, View, Picker, StyleSheet, DatePickerAndroid, Alert } from 'react-
 import {Input, Button} from 'react-native-elements'
 import { firestore, functions } from 'react-native-firebase'
 import { connect } from 'react-redux'
-import { SQIPCardEntry } from "react-native-square-in-app-payments";
+import stripe from "tipsi-stripe";
 
+stripe.setOptions({
+  publishableKey: 'pk_test_E5F3R2AKL4rys1KjNHOdd1ek00WsTuJFZE',
+});
 
  class RequestSocialMediaForm extends Component {
 
@@ -23,8 +26,6 @@ import { SQIPCardEntry } from "react-native-square-in-app-payments";
             date : '',
             loading : false
         }
-        this.onStartCardEntry = this.onStartCardEntry.bind(this);
-        this.onCardNonceRequestSuccess = this.onCardNonceRequestSuccess.bind(this);
     }
 
     onRequestService(){
@@ -58,14 +59,59 @@ import { SQIPCardEntry } from "react-native-square-in-app-payments";
         this.setState({date : dueDate})
       }
 
-      this.onStartCardEntry()
-        }
+      this.requestPayment()
 
-          /**
-   * Callback when the card entry is closed after call 'SQIPCardEntry.completeCardEntry'
-   */
-  onCardEntryComplete() {
-    // Update UI to notify user that the payment flow is completed
+        }
+  
+  requestPayment(){
+    stripe.paymentRequestWithCardForm()
+    .then(stripeTokenInfo =>{
+      console.log('Token created');
+      fetch('http://192.168.1.106:8080/charge-card', {
+        method : 'POST',
+        headers : {
+        'Content-Type': 'application/json',
+        },
+        body : JSON.stringify({
+          amount : 100,
+          tokenId: stripeTokenInfo.tokenId
+        })
+      })
+      .then(response=>{
+        console.log(response)
+        if(response.status = 200){
+          this.onSuccess()
+        }
+        else{
+          Alert.alert(
+            'Something went wrong',
+            'Try again later.',
+            [
+              {text : 'OK', onPress: ()=>{console.log('OK pressed')}}
+            ]
+          )
+          this.setState({loading:false})
+          return false
+        }
+      })
+    })
+    .catch(error=>{
+      console.log('Payment failed', { error });
+      Alert.alert(
+        'Something went wrong',
+        'Try again later.',
+        [
+          {text : 'OK', onPress: ()=>{console.log('OK pressed')}}
+        ]
+      )
+      this.setState({loading:false})
+      return false
+    })
+  }
+
+
+
+  onSuccess() {
       firestore().collection('services').add({
       clientID : this.props.userAuth.uid,
       type : 'Social Media',
@@ -87,67 +133,11 @@ import { SQIPCardEntry } from "react-native-square-in-app-payments";
       )
     }).catch(error=>{
       this.setState({loading:false})
-      console.error(error)
       })
     
-    
   }
 
 
-        /**
-   * Callback when successfully get the card nonce details for processig
-   * card entry is still open and waiting for processing card nonce details
-   * @param {*} cardDetails
-   */
-  async onCardNonceRequestSuccess(cardDetails) {
-    try {
-      console.log(cardDetails)
-      // take payment with the card details
-      let data = {
-        price : 50,
-        service : 'Social Media',
-        nonce : cardDetails.nonce
-
-      }
-      //let charge_card = functions().httpsCallable('charge_card');
-      //let response = await charge_card(data)
-      //console.log(response)
-      // payment finished successfully
-      // you must call this method to close card entry
-       await SQIPCardEntry.completeCardEntry(
-        this.onCardEntryComplete(),
-      ); 
-
-      
-    } catch (ex) {
-      // payment failed to complete due to error
-      // notify card entry to show processing error
-      console.log(ex)
-      await SQIPCardEntry.showCardNonceProcessingError(ex.message);
-    }
-  }
-
-  /**
-   * Callback when card entry is cancelled and UI is closed
-   */
-  onCardEntryCancel() {
-    console.log('Entry canceled')
-    // Handle the cancel callback
-  }
-
-  /**
-   * An event listener to start card entry flow
-   */
-  async onStartCardEntry() {
-    const cardEntryConfig = {
-      collectPostalCode: false,
-    };
-    await SQIPCardEntry.startCardEntryFlow(
-      cardEntryConfig,
-      (cardDetails) =>{this.onCardNonceRequestSuccess(cardDetails)},
-      this.onCardEntryCancel,
-    );
-  }
 
       async openDatePicker(){
         try {

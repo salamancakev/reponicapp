@@ -11,7 +11,6 @@ import { Alert, ToastAndroid } from "react-native";
 import { createStackNavigator, createAppContainer } from "react-navigation";
 import { auth, firestore, messaging, notifications } from "react-native-firebase";
 import {connect} from 'react-redux'
-import {SQIPCore} from 'react-native-square-in-app-payments'
 import { LoginScreen } from "./pages/Login";
 import {SignUpScreen} from './pages/SignUp';
 
@@ -41,7 +40,7 @@ class ReponicApp extends Component {
       
 
 
-  async componentDidMount(){
+ componentDidMount(){
     this.unsubscriber = auth().onAuthStateChanged((user)=>{
       console.log(this.props)
       this.props.updateUserAuth(user)
@@ -67,7 +66,6 @@ class ReponicApp extends Component {
     })
 
     this.onTokenRefresh()
-    await SQIPCore.setSquareApplicationId('sq0idp-6azISZ4VmyH_wivoElhxHA');
 
   }
   
