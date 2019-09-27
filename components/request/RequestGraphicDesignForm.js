@@ -3,8 +3,11 @@ import { Text, View, Picker, StyleSheet, DatePickerAndroid, Alert } from 'react-
 import {Input, Button} from 'react-native-elements'
 import { firestore } from 'react-native-firebase'
 import { connect } from 'react-redux'
-import { SQIPCardEntry } from "react-native-square-in-app-payments";
+import stripe from "tipsi-stripe";
 
+stripe.setOptions({
+  publishableKey: 'pk_test_E5F3R2AKL4rys1KjNHOdd1ek00WsTuJFZE',
+});
 class RequestGraphicDesignForm extends Component {
 
     constructor(){
@@ -19,8 +22,6 @@ class RequestGraphicDesignForm extends Component {
             date : '',
             loading : false
         }
-        this.onStartCardEntry = this.onStartCardEntry.bind(this);
-        this.onCardNonceRequestSuccess = this.onCardNonceRequestSuccess.bind(this);
     }
     onRequestService(){
       this.setState({loading : true})
@@ -51,14 +52,62 @@ class RequestGraphicDesignForm extends Component {
         this.setState({date : dueDate})
       }
       
-      this.onStartCardEntry()
+      this.requestPayment()    
+    }
+
+
+
+    requestPayment(){
+      stripe.paymentRequestWithCardForm()
+      .then(stripeTokenInfo =>{
+        console.log('Token created');
+        fetch('https://reponic-app-payments-server.herokuapp.com/charge-card', {
+          method : 'POST',
+          headers : {
+          'Content-Type': 'application/json',
+          },
+          body : JSON.stringify({
+            amount : 100,
+            tokenId: stripeTokenInfo.tokenId
+          })
+        })
+        .then(response=>{
+          console.log(response)
+          if(response.status = 200){
+            this.onSuccess()
+          }
+          else{
+            Alert.alert(
+              'Something went wrong',
+              'Try again later.',
+              [
+                {text : 'OK', onPress: ()=>{console.log('OK pressed')}}
+              ]
+            )
+            this.setState({loading:false})
+            return false
+          }
+        })
+      })
+      .catch(error=>{
+        console.log('Payment failed', { error });
+        Alert.alert(
+          'Something went wrong',
+          'Try again later.',
+          [
+            {text : 'OK', onPress: ()=>{console.log('OK pressed')}}
+          ]
+        )
+        this.setState({loading:false})
+        return false
+      })
     }
 
 
     /**
    * Callback when the card entry is closed after call 'SQIPCardEntry.completeCardEntry'
    */
-  onCardEntryComplete() {
+  onSuccess() {
     // Update UI to notify user that the payment flow is completed
     firestore().collection('services').add({
         clientID : this.props.userAuth.uid,
@@ -82,49 +131,6 @@ class RequestGraphicDesignForm extends Component {
         this.setState({loading:false})
         console.error(error)
       })
-  }
-
-  /**
-   * Callback when successfully get the card nonce details for processig
-   * card entry is still open and waiting for processing card nonce details
-   * @param {*} cardDetails
-   */
-  async onCardNonceRequestSuccess(cardDetails) {
-    try {
-      // take payment with the card details
-      // await chargeCard(cardDetails);
-
-      // payment finished successfully
-      // you must call this method to close card entry
-      await SQIPCardEntry.completeCardEntry(
-        this.onCardEntryComplete(),
-      );
-    } catch (ex) {
-      // payment failed to complete due to error
-      // notify card entry to show processing error
-      await SQIPCardEntry.showCardNonceProcessingError(ex.message);
-    }
-  }
-
-  /**
-   * Callback when card entry is cancelled and UI is closed
-   */
-  onCardEntryCancel() {
-    // Handle the cancel callback
-  }
-
-  /**
-   * An event listener to start card entry flow
-   */
-  async onStartCardEntry() {
-    const cardEntryConfig = {
-      collectPostalCode: false,
-    };
-    await SQIPCardEntry.startCardEntryFlow(
-      cardEntryConfig,
-      (cardDetails)=>{this.onCardNonceRequestSuccess(cardDetails)},
-      this.onCardEntryCancel,
-    );
   }
 
 

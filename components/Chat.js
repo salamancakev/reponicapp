@@ -25,15 +25,17 @@ export class ChatScreen extends Component {
         this.state = {
             chatID : null,
             messages : [],
-            chatData : null
+            chatData : null,
+            loading : true
         }
+        this.unsubscriber = null
     }
 
     componentDidMount() {
       let chatID = this.props.navigation.getParam('chatID', null)
       let chatData =  this.props.navigation.getParam('chatData', null)
       this.setState({chatID : chatID, chatData : chatData})
-      firestore().collection('chats').doc(chatID).onSnapshot(doc=>{
+      this.unsubscriber = firestore().collection('chats').doc(chatID).onSnapshot(doc=>{
         
         if(doc.exists){
           let messages = doc.data().messages
@@ -48,7 +50,8 @@ export class ChatScreen extends Component {
           }
           console.log(messages)
           this.setState({
-            messages :  messages
+            messages :  messages,
+            loading : false
             })
         }
 
@@ -60,6 +63,10 @@ export class ChatScreen extends Component {
       })
       
      
+      }
+
+      componentWillUnmount(){
+        this.unsubscriber()
       }
 
 
@@ -102,7 +109,7 @@ export class ChatScreen extends Component {
 
 
     render() {
-      if(this.state.messages.length == 0){
+      if(this.state.loading){
         return <ActivityIndicator />
       }
       else{

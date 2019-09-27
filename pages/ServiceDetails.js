@@ -3,7 +3,6 @@ import { Text, View, ScrollView, ActivityIndicator, StyleSheet, Alert, ToastAndr
 import { ListItem, Icon, Button } from "react-native-elements";
 import firebase, { firestore } from "react-native-firebase";
 import { connect } from "react-redux";
-import { SQIPCardEntry } from "react-native-square-in-app-payments";
 
  class ServiceDetailsScreen extends Component {
     constructor(){
@@ -47,7 +46,8 @@ import { SQIPCardEntry } from "react-native-square-in-app-payments";
             data : data,
             id :id,
             name : name,
-            nameTitle : 'Worker Name'
+            nameTitle : 'Worker Name',
+            fcmToken : doc.data().fcmToken
           })
           
   
@@ -80,6 +80,21 @@ import { SQIPCardEntry } from "react-native-square-in-app-payments";
         }
         
       }
+
+
+    renderJobConfirmationDetails(){
+      return (
+      <View>
+        <ListItem leftIcon={ <Icon name='credit-card' type='font-awesome' />} 
+          title='Price' 
+          subtitle={'$ '+this.state.data.price}
+          />
+          <Button containerStyle={{marginVertical: 10}} titleStyle={{fontSize : 16}} 
+          title="Accept/Decline Job"  raised={true} loading={this.state.loading} disabled={this.state.disabled} onPress={()=>this.onAcceptConfirm()} />
+      </View>
+        
+      )
+    }
 
     showSocialMediaDetails(){
         return (
@@ -122,11 +137,14 @@ import { SQIPCardEntry } from "react-native-square-in-app-payments";
           title='Status' 
           subtitle={this.state.data.status}
           />
+          {this.props.userInfo.type == 'client' && this.state.data.status == 'Waiting confirmation' 
+          ? this.renderJobConfirmationDetails()
+          : null}
           {this.props.userInfo.type == 'member' && this.state.data.status != 'Completed'
           ? <Button containerStyle={{marginVertical: 10}} titleStyle={{fontSize : 16}} 
           title="Mark Job as Completed"  raised={true} loading={this.state.loading} disabled={this.state.disabled} onPress={()=>this.onConfirm("member")} />
           : null}
-          {this.props.userInfo.type == 'client' && this.state.data.status == 'Completed'
+          {this.props.userInfo.type == 'client' && this.state.data.status == 'Waiting completion'
           ? <Button containerStyle={{marginVertical: 10}} titleStyle={{fontSize : 16}} 
           title="Confirm Job Completion"  raised={true} loading={this.state.loading} disabled={this.state.disabled} onPress={()=>this.onConfirm("client")} />
           : null}
@@ -173,11 +191,14 @@ import { SQIPCardEntry } from "react-native-square-in-app-payments";
           title='Status' 
           subtitle={this.state.data.status}
           />
+          {this.props.userInfo.type == 'client' && this.state.data.status == 'Waiting confirmation' 
+          ? this.renderJobConfirmationDetails()
+          : null}
           {this.props.userInfo.type == 'member' && this.state.data.status != 'Completed'
           ? <Button containerStyle={{marginVertical: 10}} titleStyle={{fontSize : 16}} 
           title="Mark Job as Completed"  raised={true} loading={this.state.loading} disabled={this.state.disabled} onPress={()=>this.onConfirm("member")} />
           : null}
-          {this.props.userInfo.type == 'client' && this.state.data.status == 'Completed'
+          {this.props.userInfo.type == 'client' && this.state.data.status == 'Waiting completion'
           ? <Button containerStyle={{marginVertical: 10}} titleStyle={{fontSize : 16}} 
           title="Confirm Job Completion"  raised={true} loading={this.state.loading} disabled={this.state.disabled} onPress={()=>this.onConfirm("client")} />
           : null}
@@ -231,11 +252,14 @@ import { SQIPCardEntry } from "react-native-square-in-app-payments";
           title='Status' 
           subtitle={this.state.data.status}
           />
+          {this.props.userInfo.type == 'client' && this.state.data.status == 'Waiting confirmation' 
+          ? this.renderJobConfirmationDetails()
+          : null}
           {this.props.userInfo.type == 'member' && this.state.data.status != 'Completed'
           ? <Button containerStyle={{marginVertical: 10}} titleStyle={{fontSize : 16}} 
           title="Mark Job as Completed"  raised={true} loading={this.state.loading} disabled={this.state.disabled} onPress={()=>this.onConfirm("member")} />
           : null}
-          {this.props.userInfo.type == 'client' && this.state.data.status == 'Completed'
+          {this.props.userInfo.type == 'client' && this.state.data.status == 'Waiting completion'
           ? <Button containerStyle={{marginVertical: 10}} titleStyle={{fontSize : 16}} 
           title="Confirm Job Completion"  raised={true} loading={this.state.loading} disabled={this.state.disabled} onPress={()=>this.onConfirm("client")} />
           : null}
@@ -289,17 +313,79 @@ import { SQIPCardEntry } from "react-native-square-in-app-payments";
           title='Status' 
           subtitle={this.state.data.status}
           />
+          {this.props.userInfo.type == 'client' && this.state.data.status == 'Waiting confirmation' 
+          ? this.renderJobConfirmationDetails()
+          : null}
           {this.props.userInfo.type == 'member' && this.state.data.status != 'Completed'
           ? <Button containerStyle={{marginVertical: 10}} titleStyle={{fontSize : 16}} 
           title="Mark Job as Completed"  raised={true} loading={this.state.loading} disabled={this.state.disabled} onPress={()=>this.onConfirm("member")} />
           : null} 
-          {this.props.userInfo.type == 'client' && this.state.data.status == 'Completed'
+          {this.props.userInfo.type == 'client' && this.state.data.status == 'Waiting completion'
           ? <Button containerStyle={{marginVertical: 10}} titleStyle={{fontSize : 16}} 
           title="Confirm Job Completion"  raised={true} loading={this.state.loading} disabled={this.state.disabled} onPress={()=>this.onConfirm("client")} />
           : null}
           </ScrollView>
         )
 
+    }
+
+
+    onAcceptConfirm(){
+      Alert.alert(
+        'Accept/Decline Job Request',
+        'Do you want to accept this job under the following conditions? Due date: '+this.state.data.dueDate+', price: $'+this.state.data.price,
+        [
+          {text : 'Accept', onPress: ()=> this.onAcceptJob()},
+          {text : 'Decline', style : 'cancel', onPress: ()=>this.onDeclineJob()}
+        ]
+        
+      ) 
+    }
+
+    onDeclineJob(){
+      this.setState({loading : true}) 
+      firestore().collection('services').doc(this.state.id).update({
+        status : 'Requested'
+      }).then(success=>{
+        this.setState({loading:false, disabled :true})
+        ToastAndroid.show(
+          'You have declined this request. You can still recieve future offers from our workers.',
+          ToastAndroid.LONG
+        )
+      })
+    }
+
+    onAcceptJob(){
+      let firstName = this.props.userInfo.firstName
+      let lastName = this.props.userInfo.lastName
+      let clientName = firstName+' '+lastName
+      this.setState({loading : true})
+      firestore().collection('services').doc(this.state.id).update({
+        status : 'In Progress'
+      }).then(success=>{
+        firestore().collection('chats').add({
+          clientID : this.state.data.clientID,
+          clientName : clientName,
+          clientFcmToken : this.props.userInfo.fcmToken,
+          memberID : this.props.userAuth.uid,
+          memberName : this.state.name,
+          memberFcmToken : this.state.fcmToken,
+          messages : []
+        }).then(success2=>{
+          this.setState({loading:false, disabled :true})
+        ToastAndroid.show(
+          'You have accepted the job. A chat has been created between you and your worker.',
+          ToastAndroid.LONG
+        )
+        })
+      }).catch(error=>{
+        console.log(error)
+        this.setState({loading :false})
+        ToastAndroid.show(
+          'Something went wrong',
+          ToastAndroid.LONG
+        )
+      })
     }
 
 
@@ -319,7 +405,7 @@ import { SQIPCardEntry } from "react-native-square-in-app-payments";
       else{
         Alert.alert(
           'Finish Job',
-          'Only mark a job as completed if your worker has sent you the final product. Our team will verify this with your worker and will proceed to take your payment. Are you sure you want to mark this job as completed?',
+          'Only mark a job as completed if your worker has sent you the final product. Our team will verify this with your worker. Are you sure you want to mark this job as completed?',
           [
             {text : 'Yes', onPress: ()=> this.onFinishJob(type)},
             {text : 'No', style : 'cancel'}
@@ -334,7 +420,7 @@ import { SQIPCardEntry } from "react-native-square-in-app-payments";
       if(type == 'member'){
        this.setState({loading : true})
       firestore().collection('services').doc(this.state.id).update({
-        status : 'Waiting for confirmation'
+        status : 'Waiting completion'
       }).then(success=>{
         this.setState({
           loading : false,

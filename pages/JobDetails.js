@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
-import { Text, ScrollView, ActivityIndicator, StyleSheet, Alert, ToastAndroid } from 'react-native'
-import { ListItem, Icon, Button } from "react-native-elements";
+import { Text, ScrollView, ActivityIndicator, StyleSheet, Alert, ToastAndroid, Modal, View } from 'react-native'
+import { ListItem, Icon, Button, Input } from "react-native-elements";
 import { firestore } from "react-native-firebase";
 import { connect } from "react-redux";
 
@@ -25,8 +25,11 @@ import { connect } from "react-redux";
           data : null,
           id : null,
           clientName : '',
+          price : null,
+          priceError : '',
           loading : false,
-          disabled : false
+          disabled : false,
+          modalVisible :false
         }
     }
 
@@ -51,9 +54,10 @@ import { connect } from "react-redux";
     }
 
     onConfirm(){
+      this.setState({modalVisible : false})
       Alert.alert(
         'Accept Job',
-        'Do you want to accept this job? A notification will be sent to the client and a chat will be created',
+        'Do you want to accept this job under the following conditions? Due date: '+this.state.data.dueDate+', price: $'+this.state.price,
         [
           {text : 'Yes', onPress: ()=> this.onAcceptJob()},
           {text : 'No', style : 'cancel'}
@@ -66,26 +70,19 @@ import { connect } from "react-redux";
       let memberName = this.props.userInfo.firstName+' '+this.props.userInfo.lastName
       this.setState({loading : true})
       firestore().collection('services').doc(this.state.id).set({
-        status : 'In Progress',
-        memberID : this.props.userAuth.uid
+        status : 'Waiting confirmation',
+        memberID : this.props.userAuth.uid,
+        price : this.state.price
       },
       {merge : true}).then(success=>{
-        firestore().collection('chats').add({
-          clientID : this.state.data.clientID,
-          clientName : this.state.clientName,
-          clientFcmToken : this.state.data.clientFcmToken,
-          memberID : this.props.userAuth.uid,
-          memberName : memberName,
-          memberFcmToken : this.props.userInfo.fcmToken,
-          messages : []
-        }).then(success2=>{
+        
           this.setState({loading:false, disabled :true})
         ToastAndroid.show(
-          'You have accepted the job',
+          "A request has been sent to your client. We'll let you know if your client accepts your request.",
           ToastAndroid.LONG
         )
-        })
-      }).catch(error=>{
+        }
+      ).catch(error=>{
         console.log(error)
         this.setState({loading :false})
         ToastAndroid.show(
@@ -131,7 +128,20 @@ import { connect } from "react-redux";
           subtitle={this.state.data.dueDate}
           />
           <Button containerStyle={{marginVertical: 10}} titleStyle={{fontSize : 16}} 
-          title="Accept Job"  raised={true} loading={this.state.loading} onPress={()=>this.onConfirm()} />
+          title="Accept Job"  raised={true} onPress={()=>this.setState({modalVisible : true})} />
+          <Modal
+          animationType="slide"
+          transparent={false}
+          visible={this.state.modalVisible}
+          onRequestClose={()=> {this.setState({modalVisible : false} )}}
+          >
+            <View style={styles.container}>
+              <Text>Enter the price of your service</Text>
+            <Input containerStyle={styles.inputBox} keyboardType="number-pad" placeholder="Price ($)" onChangeText={price=>{this.setState({price})}} errorStyle={{color : 'red'}} errorMessage={this.state.priceError}/>
+            <Button containerStyle={{marginVertical: 10}} titleStyle={{fontSize : 16}} 
+            title="Accept Job"  raised={true} loading={this.state.loading} onPress={()=>this.onConfirm()} />
+            </View>
+          </Modal>
           </ScrollView>
           
         )
@@ -168,7 +178,20 @@ import { connect } from "react-redux";
           <ListItem leftIcon={ <Icon name='calendar' type='font-awesome' />} 
           title='Due Date' 
           subtitle={this.state.data.dueDate}
-          /> 
+          />
+          <Modal
+          animationType="slide"
+          transparent={false}
+          visible={this.state.modalVisible}
+          onRequestClose={()=> {this.setState({modalVisible : false} )}}
+          >
+            <View style={styles.container}>
+              <Text>Enter the price of your service</Text>
+            <Input containerStyle={styles.inputBox} keyboardType="number-pad" placeholder="Price ($)" onChangeText={price=>{this.setState({price})}} errorStyle={{color : 'red'}} errorMessage={this.state.priceError}/>
+            <Button containerStyle={{marginVertical: 10}} titleStyle={{fontSize : 16}} 
+            title="Accept Job"  raised={true} loading={this.state.loading} onPress={()=>this.onConfirm()} />
+            </View>
+          </Modal> 
           <Button containerStyle={{marginVertical: 10}} titleStyle={{fontSize : 16}} 
           title="Accept Job"  raised={true} loading={this.state.loading} onPress={()=>this.onConfirm()} />
           </ScrollView>
@@ -213,7 +236,20 @@ import { connect } from "react-redux";
           <ListItem leftIcon={ <Icon name='calendar' type='font-awesome' />} 
           title='Due Date' 
           subtitle={this.state.data.dueDate}
-          /> 
+          />
+          <Modal
+          animationType="slide"
+          transparent={false}
+          visible={this.state.modalVisible}
+          onRequestClose={()=> {this.setState({modalVisible : false} )}}
+          >
+            <View style={styles.container}>
+              <Text>Enter the price of your service</Text>
+            <Input containerStyle={styles.inputBox} keyboardType="number-pad" placeholder="Price ($)" onChangeText={price=>{this.setState({price})}} errorStyle={{color : 'red'}} errorMessage={this.state.priceError}/>
+            <Button containerStyle={{marginVertical: 10}} titleStyle={{fontSize : 16}} 
+            title="Accept Job"  raised={true} loading={this.state.loading} onPress={()=>this.onConfirm()} />
+            </View>
+          </Modal> 
           <Button containerStyle={{marginVertical: 10}} titleStyle={{fontSize : 16}} 
           title="Accept Job"  raised={true} loading={this.state.loading} onPress={()=>this.onConfirm()} />
           </ScrollView>
@@ -259,7 +295,20 @@ import { connect } from "react-redux";
           <ListItem leftIcon={ <Icon name='calendar' type='font-awesome' />} 
           title='Due Date' 
           subtitle={this.state.data.dueDate}
-          /> 
+          />
+          <Modal
+          animationType="slide"
+          transparent={false}
+          visible={this.state.modalVisible}
+          onRequestClose={()=> {this.setState({modalVisible : false} )}}
+          >
+            <View style={styles.container}>
+              <Text>Enter the price of your service</Text>
+            <Input containerStyle={styles.inputBox} keyboardType="number-pad" placeholder="Price ($)" onChangeText={price=>{this.setState({price})}} errorStyle={{color : 'red'}} errorMessage={this.state.priceError}/>
+            <Button containerStyle={{marginVertical: 10}} titleStyle={{fontSize : 16}} 
+            title="Accept Job"  raised={true} loading={this.state.loading} onPress={()=>this.onConfirm()} />
+            </View>
+          </Modal> 
           <Button containerStyle={{marginVertical: 10}} titleStyle={{fontSize : 16}} 
           title="Accept Job"  raised={true} loading={this.state.loading} disabled={this.state.disabled} onPress={()=>this.onConfirm()} />
           </ScrollView>
@@ -300,8 +349,16 @@ function mapStateToProps(state){
 
 const styles = StyleSheet.create({
   container : {
+    flex: 1,
     justifyContent : 'center',
     alignItems : 'center'
 
-  }
+  },
+  inputBox : {
+    width : 300,
+    backgroundColor : 'rgba(255,255,255,0.3)',
+    borderRadius : 20,
+    paddingHorizontal : 10,
+    marginVertical : 5
+  },
 })

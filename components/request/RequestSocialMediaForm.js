@@ -67,7 +67,7 @@ stripe.setOptions({
     stripe.paymentRequestWithCardForm()
     .then(stripeTokenInfo =>{
       console.log('Token created');
-      fetch('http://192.168.1.106:8080/charge-card', {
+      fetch('https://reponic-app-payments-server.herokuapp.com/charge-card', {
         method : 'POST',
         headers : {
         'Content-Type': 'application/json',

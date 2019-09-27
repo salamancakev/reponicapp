@@ -12,6 +12,7 @@ class JobListScreen extends Component {
             jobs : [],
             loading : true
         }
+        this.unsubscribe = null
       }
 
     static navigationOptions = ({navigation}) => {
@@ -34,7 +35,8 @@ class JobListScreen extends Component {
      let service = this.props.userInfo.service
      console.log(service)
      
-     firestore().collection('services').where('type', '==', service).where('status', '==', 'Requested').onSnapshot(snapshot=>{
+     this.unsubscribe = firestore().collection('services').where('type', '==', service).where('status', '==', 'Requested').onSnapshot(snapshot=>{
+       console.log(snapshot)
         if (snapshot.empty) {
             console.log('No matching documents.');
             this.setState({loading :false})
@@ -50,10 +52,11 @@ class JobListScreen extends Component {
           );
           this.setState({loading : false, jobs :jobs})
         })
-        .catch(err => {
-          console.log('Error getting documents', err);
-        });
 
+    }
+    
+    componentWillUnmount(){
+      this.unsubscribe()
     }
 
     listJobs(){
@@ -128,6 +131,7 @@ class JobListScreen extends Component {
         if(this.state.loading){
             return <ActivityIndicator/>
         }
+        
         else{
          return this.listJobs() 
         }
