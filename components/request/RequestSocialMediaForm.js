@@ -3,11 +3,7 @@ import { Text, View, Picker, StyleSheet, DatePickerAndroid, Alert } from 'react-
 import {Input, Button} from 'react-native-elements'
 import { firestore, functions } from 'react-native-firebase'
 import { connect } from 'react-redux'
-import stripe from "tipsi-stripe";
 
-stripe.setOptions({
-  publishableKey: 'pk_test_E5F3R2AKL4rys1KjNHOdd1ek00WsTuJFZE',
-});
 
  class RequestSocialMediaForm extends Component {
 
@@ -59,55 +55,11 @@ stripe.setOptions({
         this.setState({date : dueDate})
       }
 
-      this.requestPayment()
+      this.onSuccess()
 
         }
   
-  requestPayment(){
-    stripe.paymentRequestWithCardForm()
-    .then(stripeTokenInfo =>{
-      console.log('Token created');
-      fetch('https://reponic-app-payments-server.herokuapp.com/charge-card', {
-        method : 'POST',
-        headers : {
-        'Content-Type': 'application/json',
-        },
-        body : JSON.stringify({
-          amount : 100,
-          tokenId: stripeTokenInfo.tokenId
-        })
-      })
-      .then(response=>{
-        console.log(response)
-        if(response.status = 200){
-          this.onSuccess()
-        }
-        else{
-          Alert.alert(
-            'Something went wrong',
-            'Try again later.',
-            [
-              {text : 'OK', onPress: ()=>{console.log('OK pressed')}}
-            ]
-          )
-          this.setState({loading:false})
-          return false
-        }
-      })
-    })
-    .catch(error=>{
-      console.log('Payment failed', { error });
-      Alert.alert(
-        'Something went wrong',
-        'Try again later.',
-        [
-          {text : 'OK', onPress: ()=>{console.log('OK pressed')}}
-        ]
-      )
-      this.setState({loading:false})
-      return false
-    })
-  }
+  
 
 
 

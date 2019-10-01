@@ -3,6 +3,11 @@ import { Text, View, ScrollView, ActivityIndicator, StyleSheet, Alert, ToastAndr
 import { ListItem, Icon, Button } from "react-native-elements";
 import firebase, { firestore } from "react-native-firebase";
 import { connect } from "react-redux";
+import stripe from "tipsi-stripe";
+
+stripe.setOptions({
+  publishableKey: 'pk_test_E5F3R2AKL4rys1KjNHOdd1ek00WsTuJFZE',
+});
 
  class ServiceDetailsScreen extends Component {
     constructor(){
@@ -335,7 +340,7 @@ import { connect } from "react-redux";
         'Accept/Decline Job Request',
         'Do you want to accept this job under the following conditions? Due date: '+this.state.data.dueDate+', price: $'+this.state.data.price,
         [
-          {text : 'Accept', onPress: ()=> this.onAcceptJob()},
+          {text : 'Accept', onPress: ()=> this.requestPayment()},
           {text : 'Decline', style : 'cancel', onPress: ()=>this.onDeclineJob()}
         ]
         
@@ -352,6 +357,52 @@ import { connect } from "react-redux";
           'You have declined this request. You can still recieve future offers from our workers.',
           ToastAndroid.LONG
         )
+      })
+    }
+
+    requestPayment(){
+      stripe.paymentRequestWithCardForm()
+      .then(stripeTokenInfo =>{
+        console.log('Token created');
+        fetch('https://reponic-app-payments-server.herokuapp.com/charge-card', {
+          method : 'POST',
+          headers : {
+          'Content-Type': 'application/json',
+          },
+          body : JSON.stringify({
+            amount : this.state.data.price,
+            tokenId: stripeTokenInfo.tokenId
+          })
+        })
+        .then(response=>{
+          console.log(response)
+          if(response.status = 200){
+            this.onAcceptJob()
+          }
+          else{
+            Alert.alert(
+              'Something went wrong',
+              'Try again later.',
+              [
+                {text : 'OK', onPress: ()=>{console.log('OK pressed')}}
+              ]
+            )
+            this.setState({loading:false})
+            return false
+          }
+        })
+      })
+      .catch(error=>{
+        console.log('Payment failed', { error });
+        Alert.alert(
+          'Something went wrong',
+          'Try again later.',
+          [
+            {text : 'OK', onPress: ()=>{console.log('OK pressed')}}
+          ]
+        )
+        this.setState({loading:false})
+        return false
       })
     }
 
